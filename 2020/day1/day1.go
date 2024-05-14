@@ -1,17 +1,35 @@
 package main
 
+import (
+	"bufio"
+	"flag"
+	"fmt"
+	"log"
+	"os"
+)
+
 var (
 	target = 2020
 )
 
 func main() {
-	// Load file line by line for efficiency
-	// Likely need type conversion
-	// Check if sums add up to 2020
-	// keep track of ints that sum to 2020
-	// once 2 ints are found, terminate file loading
-	// multiply 2 ints
-	// return result
+	fileLocation := flag.String("inputLocation", "input.txt", "define a file location for thje input file")
+	flag.Parse()
+
+	file, err := os.Open(*fileLocation)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func sumTo(a, b int) bool {

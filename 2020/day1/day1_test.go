@@ -17,10 +17,12 @@ func TestSumTo(t *testing.T) {
 	}
 
 	for _, d := range data {
-		target = d.target
-		got := sumTo(d.operand1, d.operand2)
-		if got != d.want {
-			t.Errorf("sumTo() - got: %t, expected: %t", got, d.want)
-		}
+		t.Run(d.testCase, func(t *testing.T) {
+			target = d.target
+			got := sumTo(d.operand1, d.operand2)
+			if got != d.want {
+				t.Errorf("sumTo() - got: %t, expected: %t", got, d.want)
+			}
+		})
 	}
 }
