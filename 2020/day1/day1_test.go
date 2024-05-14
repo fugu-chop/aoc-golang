@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestSumTo(t *testing.T) {
+func TestSumToTarget(t *testing.T) {
 	data := []struct {
 		testCase string
 		target   int
@@ -19,7 +19,7 @@ func TestSumTo(t *testing.T) {
 	for _, d := range data {
 		t.Run(d.testCase, func(t *testing.T) {
 			target = d.target
-			got := sumTo(d.operand1, d.operand2)
+			got := sumToTarget(d.operand1, d.operand2)
 			if got != d.want {
 				t.Errorf("sumTo() - got: %t, expected: %t", got, d.want)
 			}
