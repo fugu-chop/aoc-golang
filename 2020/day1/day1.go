@@ -25,9 +25,10 @@ func main() {
 
 	fileContent := string(file)
 	stringNums = strings.Split(fileContent, "\n")
-	intNums := convertStringToIntSlice(stringNums)
+	// Handle newline added to file
+	intNums := convertStringToIntSlice(stringNums[:len(stringNums)-1])
 
-	startIdx, endIdx, found := parseNumbers(intNums)
+	startIdx, endIdx, found := parseTwoNumbers(intNums)
 	if !found {
 		log.Fatalf("Could not find numbers that sum to %d", target)
 	}
@@ -45,7 +46,7 @@ func sumToTarget(a ...int) bool {
 	return sum == target
 }
 
-func parseNumbers(numbers []int) (int, int, bool) {
+func parseTwoNumbers(numbers []int) (int, int, bool) {
 	for startIdx := 0; startIdx < len(numbers)-1; startIdx++ {
 		for endIdx := startIdx + 1; endIdx < len(numbers); endIdx++ {
 			if sumToTarget(numbers[startIdx], numbers[endIdx]) {
@@ -60,15 +61,13 @@ func convertStringToIntSlice(nums []string) []int {
 	intSlice := make([]int, len(nums))
 
 	for i, element := range nums {
-		if len(element) < 1 {
-			continue
+		if len(element) > 0 {
+			num, err := strconv.Atoi(element)
+			if err != nil {
+				log.Fatal(err)
+			}
+			intSlice[i] = num
 		}
-
-		num, err := strconv.Atoi(element)
-		if err != nil {
-			log.Fatal(err)
-		}
-		intSlice[i] = num
 	}
 
 	return intSlice
