@@ -35,8 +35,14 @@ func main() {
 	fmt.Println(intNums[startIdx] * intNums[endIdx])
 }
 
-func sumToTarget(a, b int) bool {
-	return a+b == target
+func sumToTarget(a ...int) bool {
+	sum := 0
+
+	for _, num := range a {
+		sum += num
+	}
+
+	return sum == target
 }
 
 func parseNumbers(numbers []int) (int, int, bool) {
