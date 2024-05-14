@@ -5,6 +5,26 @@ import (
 	"testing"
 )
 
+func TestCheckCompliance(t *testing.T) {
+	data := []struct {
+		testCase string
+		input    string
+		want     bool
+	}{
+		{"compliant password", "3-4 c: cctc", true},
+		{"non-compliant password", "1-3 b: cdefg", false},
+	}
+
+	for _, d := range data {
+		t.Run(d.testCase, func(t *testing.T) {
+			got := checkCompliance(d.input)
+			if got != d.want {
+				t.Errorf("checkCompliance(), got: %t, want: %t", got, d.want)
+			}
+		})
+	}
+}
+
 func TestParseCriteria(t *testing.T) {
 	data := []struct {
 		testCase string
@@ -13,6 +33,7 @@ func TestParseCriteria(t *testing.T) {
 	}{
 		{"empty criteria", "", nil},
 		{"malformed criteria: too many spaces", "fdha jkf ld", nil},
+		{"malformed criteria: too many dashes", "3-7-z f", nil},
 		{"malformed criteria: not enough elements", "x", nil},
 		{"valid criteria", "3-7 z", &Criteria{
 			letter:   "z",
@@ -47,6 +68,11 @@ func TestMemoisePassword(t *testing.T) {
 		{"handles numbers", "11122", map[string]int{
 			"1": 3,
 			"2": 2,
+		}},
+		{"handles spaces", "   111x2    ", map[string]int{
+			"1": 3,
+			"2": 1,
+			"x": 1,
 		}},
 	}
 

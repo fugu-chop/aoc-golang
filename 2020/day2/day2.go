@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -71,12 +70,29 @@ func main() {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
+		checkCompliance(scanner.Text())
 	}
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+/*
+checkCompliance expects a string in the form of 9-14 d: ddddbdddddddxfdd
+it will handle trimming of whitespaces
+*/
+func checkCompliance(line string) bool {
+	components := strings.Split(line, ":")
+	criteria := parseCriteria(components[0])
+	memoPassword := memoisePassword(components[1])
+
+	if memoPassword[criteria.letter] >= criteria.minCount &&
+		memoPassword[criteria.letter] <= criteria.maxCount {
+		return true
+	}
+
+	return false
 }
 
 /*
@@ -90,7 +106,7 @@ func parseCriteria(criteria string) *Criteria {
 	}
 
 	counts := strings.Split(splitCriteria[0], "-")
-	if len(counts) < 2 {
+	if len(counts) != 2 {
 		return nil
 	}
 
@@ -112,7 +128,8 @@ func parseCriteria(criteria string) *Criteria {
 
 func memoisePassword(password string) map[string]int {
 	counts := map[string]int{}
-	letterSlice := strings.Split(password, "")
+	cleanedPassword := strings.TrimSpace(password)
+	letterSlice := strings.Split(cleanedPassword, "")
 
 	for _, letter := range letterSlice {
 		counts[letter] += 1
