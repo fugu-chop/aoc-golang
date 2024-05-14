@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-type Criteria struct {
+type CountCriteria struct {
 	letter   string
 	minCount int
 	maxCount int
@@ -76,9 +76,15 @@ func main() {
 
 	scanner := bufio.NewScanner(file)
 
-	if *variant == 1 {
-		for scanner.Scan() {
+	for scanner.Scan() {
+		if *variant == 1 {
 			if checkCountsCompliance(scanner.Text()) {
+				validCounts += 1
+			}
+		}
+
+		if *variant == 2 {
+			if checkIndexCompliance(scanner.Text()) {
 				validCounts += 1
 			}
 		}
@@ -91,13 +97,20 @@ func main() {
 	fmt.Println(validCounts)
 }
 
+func checkIndexCompliance(line string) bool {
+	components := strings.Split(line, ":")
+	_ = components
+
+	return false
+}
+
 /*
-checkCompliance expects a string in the form of 9-14 d: ddddbdddddddxfdd
+checkCountsCompliance expects a string in the form of 9-14 d: ddddbdddddddxfdd
 it will handle trimming of whitespaces
 */
 func checkCountsCompliance(line string) bool {
 	components := strings.Split(line, ":")
-	criteria := parseCriteria(components[0])
+	criteria := parseCountCriteria(components[0])
 	memoPassword := memoisePassword(components[1])
 
 	if memoPassword[criteria.letter] >= criteria.minCount &&
@@ -112,7 +125,7 @@ func checkCountsCompliance(line string) bool {
 parseCriteria expects a string in the form of "3-11 z"
 i.e. trimmed of leading and trailing whitespaces
 */
-func parseCriteria(criteria string) *Criteria {
+func parseCountCriteria(criteria string) *CountCriteria {
 	splitCriteria := strings.Split(criteria, " ")
 	if len(splitCriteria) != 2 {
 		return nil
@@ -132,7 +145,7 @@ func parseCriteria(criteria string) *Criteria {
 		log.Fatal(err)
 	}
 
-	return &Criteria{
+	return &CountCriteria{
 		letter:   splitCriteria[1],
 		minCount: minCount,
 		maxCount: maxCount,

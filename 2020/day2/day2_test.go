@@ -29,13 +29,13 @@ func TestParseCriteria(t *testing.T) {
 	data := []struct {
 		testCase string
 		input    string
-		want     *Criteria
+		want     *CountCriteria
 	}{
 		{"empty criteria", "", nil},
 		{"malformed criteria: too many spaces", "fdha jkf ld", nil},
 		{"malformed criteria: too many dashes", "3-7-z f", nil},
 		{"malformed criteria: not enough elements", "x", nil},
-		{"valid criteria", "3-7 z", &Criteria{
+		{"valid criteria", "3-7 z", &CountCriteria{
 			letter:   "z",
 			minCount: 3,
 			maxCount: 7,
@@ -44,7 +44,7 @@ func TestParseCriteria(t *testing.T) {
 
 	for _, d := range data {
 		t.Run(d.testCase, func(t *testing.T) {
-			got := parseCriteria(d.input)
+			got := parseCountCriteria(d.input)
 
 			if !reflect.DeepEqual(got, d.want) {
 				t.Errorf("parseCriteria(), got: %v, want: %v", got, d.want)
