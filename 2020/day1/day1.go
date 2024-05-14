@@ -16,6 +16,7 @@ var (
 
 func main() {
 	fileLocation := flag.String("inputLocation", "input.txt", "define a file location for the input file")
+	testVariant := flag.Int("testPart", 1, "which part should be tested")
 	flag.Parse()
 
 	file, err := os.ReadFile(*fileLocation)
@@ -28,12 +29,23 @@ func main() {
 	// Handle newline added to file
 	intNums := convertStringToIntSlice(stringNums[:len(stringNums)-1])
 
-	startIdx, endIdx, found := parseTwoNumbers(intNums)
-	if !found {
-		log.Fatalf("Could not find numbers that sum to %d", target)
+	if *testVariant == 1 {
+		startIdx, endIdx, found := parseTwoNumbers(intNums)
+		if !found {
+			log.Fatalf("Could not find numbers that sum to %d", target)
+		}
+
+		fmt.Println(intNums[startIdx] * intNums[endIdx])
 	}
 
-	fmt.Println(intNums[startIdx] * intNums[endIdx])
+	if *testVariant == 2 {
+		startIdx, midIdx, endIdx, found := parseThreeNumbers(intNums)
+		if !found {
+			log.Fatalf("Could not find numbers that sum to %d", target)
+		}
+
+		fmt.Println(intNums[startIdx] * intNums[midIdx] * intNums[endIdx])
+	}
 }
 
 func sumToTarget(a ...int) bool {
@@ -47,6 +59,10 @@ func sumToTarget(a ...int) bool {
 }
 
 func parseTwoNumbers(numbers []int) (int, int, bool) {
+	if len(numbers) < 2 {
+		return 0, 0, false
+	}
+
 	for startIdx := 0; startIdx < len(numbers)-1; startIdx++ {
 		for endIdx := startIdx + 1; endIdx < len(numbers); endIdx++ {
 			if sumToTarget(numbers[startIdx], numbers[endIdx]) {
@@ -55,6 +71,23 @@ func parseTwoNumbers(numbers []int) (int, int, bool) {
 		}
 	}
 	return 0, 0, false
+}
+
+func parseThreeNumbers(numbers []int) (int, int, int, bool) {
+	if len(numbers) < 3 {
+		return 0, 0, 0, false
+	}
+
+	for startIdx := 0; startIdx < len(numbers)-2; startIdx++ {
+		for midIdx := startIdx + 1; midIdx < len(numbers)-1; midIdx++ {
+			for endIdx := startIdx + 2; endIdx < len(numbers); endIdx++ {
+				if sumToTarget(numbers[startIdx], numbers[midIdx], numbers[endIdx]) {
+					return startIdx, endIdx, midIdx, true
+				}
+			}
+		}
+	}
+	return 0, 0, 0, false
 }
 
 func convertStringToIntSlice(nums []string) []int {

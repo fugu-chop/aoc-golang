@@ -77,6 +77,29 @@ func TestParseTwoNumbers(t *testing.T) {
 	}
 }
 
+func TestParseThreeNumbers(t *testing.T) {
+	data := []struct {
+		testCase            string
+		inputSlice          []int
+		want1, want2, want3 int
+		found               bool
+	}{
+		{"empty slice", []int{}, 0, 0, 0, false},
+		{"slice with only two elements", []int{1, 2}, 0, 0, 0, false},
+		{"populated slice with a match", []int{2, 1000, 2, 20, 1000}, 1, 3, 5, true},
+		{"populated slice, but no match", []int{5, 2, 100}, 0, 0, 0, false},
+	}
+
+	for _, d := range data {
+		t.Run(d.testCase, func(t *testing.T) {
+			got1, got2, got3, gotFound := parseThreeNumbers(d.inputSlice)
+			if got1 != d.want1 && got2 != d.want2 && got3 != d.want3 && gotFound != d.found {
+				t.Errorf("parseTwoNumbers(): got: %d, %d, %d, %t; wanted: %d, %d, %d, %t", got1, got2, got3, gotFound, d.want1, d.want2, d.want3, d.found)
+			}
+		})
+	}
+}
+
 func resetTarget() {
 	target = 2020
 }
