@@ -6,6 +6,8 @@ import (
 )
 
 func TestSumToTarget(t *testing.T) {
+	defer resetTarget()
+
 	data := []struct {
 		testCase string
 		target   int
@@ -51,4 +53,30 @@ func TestConvertStringToIntSlice(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestParseTwoNumbers(t *testing.T) {
+	data := []struct {
+		testCase     string
+		inputSlice   []int
+		want1, want2 int
+		found        bool
+	}{
+		{"empty slice", []int{}, 0, 0, false},
+		{"populated slice with a match", []int{2, 1000, 2, 5, 1020}, 1, 5, true},
+		{"populated slice, but no match", []int{5, 2}, 0, 0, false},
+	}
+
+	for _, d := range data {
+		t.Run(d.testCase, func(t *testing.T) {
+			got1, got2, gotFound := parseTwoNumbers(d.inputSlice)
+			if got1 != d.want1 && got2 != d.want2 && gotFound != d.found {
+				t.Errorf("parseTwoNumbers(): got: %d, %d, %t; wanted: %d, %d, %t", got1, got2, gotFound, d.want1, d.want2, d.found)
+			}
+		})
+	}
+}
+
+func resetTarget() {
+	target = 2020
 }
