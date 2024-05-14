@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -68,14 +69,20 @@ func main() {
 	}
 	defer file.Close()
 
+	var validCounts int
+
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		checkCompliance(scanner.Text())
+		if checkCompliance(scanner.Text()) {
+			validCounts += 1
+		}
 	}
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println(validCounts)
 }
 
 /*
