@@ -1,7 +1,11 @@
 package main
 
 import (
+	"bufio"
+	"flag"
+	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -55,6 +59,24 @@ func main() {
 
 					Return intVar
 	*/
+
+	fileLocation := flag.String("inputLocation", "input.txt", "the location where the input file is")
+	flag.Parse()
+
+	file, err := os.Open(*fileLocation)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 /*
