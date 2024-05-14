@@ -1,6 +1,16 @@
 package main
 
-import "strings"
+import (
+	"log"
+	"strconv"
+	"strings"
+)
+
+type Criteria struct {
+	letter   string
+	minCount int
+	maxCount int
+}
 
 func main() {
 	/*
@@ -45,6 +55,37 @@ func main() {
 
 					Return intVar
 	*/
+}
+
+/*
+parseCriteria expects a string in the form of "3-11 z"
+i.e. trimmed of leading and trailing whitespaces
+*/
+func parseCriteria(criteria string) *Criteria {
+	splitCriteria := strings.Split(criteria, " ")
+	if len(splitCriteria) != 2 {
+		return nil
+	}
+
+	counts := strings.Split(splitCriteria[0], "-")
+	if len(counts) < 2 {
+		return nil
+	}
+
+	minCount, err := strconv.Atoi(counts[0])
+	if err != nil {
+		log.Fatal(err)
+	}
+	maxCount, err := strconv.Atoi(counts[1])
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return &Criteria{
+		letter:   splitCriteria[1],
+		minCount: minCount,
+		maxCount: maxCount,
+	}
 }
 
 func memoisePassword(password string) map[string]int {
