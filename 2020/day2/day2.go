@@ -23,9 +23,12 @@ func main() {
 			3-11 z: zzzzzdzzzzlzz
 
 			Format is x-y z where:
-				x is the lower bound (must contain at least)
-				y is the upper bound (must contain no more than)
+				x is the 'positive' position - MUST contain the letter
+				y is the 'negative' position - MUST NOT contain the letter
 				z is the letter of the alphabet
+
+			NOTE position != index:
+				index 0 == position 1
 
 			Password must meet both criteria to be compliant.
 
@@ -48,19 +51,19 @@ func main() {
 
 				Password:
 					- Trim whitespace
-					- split by letters, memoise into a map with letters
-					- key of letter, values of counts
+					- We don't even need to memoise, just need to access an index of a string
+						- Can probably convert string(password[idx])
+					- Need an out of bounds index check on the string to avoid panics
 
 				Criteria:
-					- Split by space, maybe turn into a type
-					- we can then easily compare a Criteria with the map of letter counts?
-					- E.g. letterCount[Criteria.letter] > Criteria.min && > Criteria.max
-					- if yes, increment our int Var by one
+					- Split by space, turn into a type
+					- We need to convert our 'positions' into indexes (position - 1)
 
-					Return intVar
+			Return intVar
 	*/
 
 	fileLocation := flag.String("inputLocation", "input.txt", "the location where the input file is")
+	variant := flag.Int("part", 1, "which part of the solution is attempted")
 	flag.Parse()
 
 	file, err := os.Open(*fileLocation)
@@ -72,9 +75,12 @@ func main() {
 	var validCounts int
 
 	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		if checkCompliance(scanner.Text()) {
-			validCounts += 1
+
+	if *variant == 1 {
+		for scanner.Scan() {
+			if checkCountsCompliance(scanner.Text()) {
+				validCounts += 1
+			}
 		}
 	}
 
@@ -89,7 +95,7 @@ func main() {
 checkCompliance expects a string in the form of 9-14 d: ddddbdddddddxfdd
 it will handle trimming of whitespaces
 */
-func checkCompliance(line string) bool {
+func checkCountsCompliance(line string) bool {
 	components := strings.Split(line, ":")
 	criteria := parseCriteria(components[0])
 	memoPassword := memoisePassword(components[1])

@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestCheckCompliance(t *testing.T) {
+func TestCheckCountsCompliance(t *testing.T) {
 	data := []struct {
 		testCase string
 		input    string
@@ -17,7 +17,7 @@ func TestCheckCompliance(t *testing.T) {
 
 	for _, d := range data {
 		t.Run(d.testCase, func(t *testing.T) {
-			got := checkCompliance(d.input)
+			got := checkCountsCompliance(d.input)
 			if got != d.want {
 				t.Errorf("checkCompliance(), got: %t, want: %t", got, d.want)
 			}
