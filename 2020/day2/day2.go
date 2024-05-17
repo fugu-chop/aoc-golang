@@ -11,16 +11,10 @@ import (
 )
 
 // Combine these to a single type
-type CountCriteria struct {
-	letter   string
-	minCount int
-	maxCount int
-}
-
-type IndexCriteria struct {
-	letter      string
-	firstIndex  int
-	secondIndex int
+type criteria struct {
+	letter string
+	first  int
+	second int
 }
 
 func main() {
@@ -86,14 +80,12 @@ func main() {
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
-		// switch statement
-		if *variant == 1 {
+		switch *variant {
+		case 1:
 			if checkCountsCompliance(scanner.Text()) {
 				validCounts += 1
 			}
-		}
-
-		if *variant == 2 {
+		case 2:
 			if checkPositionCompliance(scanner.Text()) {
 				validCounts += 1
 			}
@@ -115,10 +107,10 @@ func checkPositionCompliance(line string) bool {
 	components := strings.Split(line, ":")
 	// can probably pass as func args
 	criteria := parseIndexCriteria(components[0])
-	positions := findPasswordPositions(components[1], criteria.firstIndex, criteria.secondIndex)
+	positions := findPasswordPositions(components[1], criteria.first, criteria.second)
 
-	if (positions[criteria.firstIndex] == criteria.letter && positions[criteria.secondIndex] != criteria.letter) ||
-		(positions[criteria.firstIndex] != criteria.letter && positions[criteria.secondIndex] == criteria.letter) {
+	if (positions[criteria.first] == criteria.letter && positions[criteria.second] != criteria.letter) ||
+		(positions[criteria.first] != criteria.letter && positions[criteria.second] == criteria.letter) {
 		return true
 	}
 
@@ -131,51 +123,23 @@ it will handle trimming of whitespaces
 */
 func checkCountsCompliance(line string) bool {
 	components := strings.Split(line, ":")
-	criteria := parseCountCriteria(components[0])
+	criteria := parseCriteria(components[0])
 	memoPassword := memoisePassword(components[1])
 
-	if memoPassword[criteria.letter] >= criteria.minCount &&
-		memoPassword[criteria.letter] <= criteria.maxCount {
+	if memoPassword[criteria.letter] >= criteria.first &&
+		memoPassword[criteria.letter] <= criteria.second {
 		return true
 	}
 
 	return false
 }
 
-func parseIndexCriteria(criteria string) *IndexCriteria {
-	// extract to method
-	splitCriteria := strings.Split(criteria, " ")
-	if len(splitCriteria) != 2 {
-		return nil
-	}
-
-	counts := strings.Split(splitCriteria[0], "-")
-	if len(counts) != 2 {
-		return nil
-	}
-
-	minCount, err := strconv.Atoi(counts[0])
-	if err != nil {
-		log.Fatal(err)
-	}
-	maxCount, err := strconv.Atoi(counts[1])
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return &IndexCriteria{
-		letter:      splitCriteria[1],
-		firstIndex:  minCount - 1,
-		secondIndex: maxCount - 1,
-	}
-}
-
 /*
 parseCriteria expects a string in the form of "3-11 z"
 i.e. trimmed of leading and trailing whitespaces
 */
-func parseCountCriteria(criteria string) *CountCriteria {
-	splitCriteria := strings.Split(criteria, " ")
+func parseCriteria(stringCriteria string) *criteria {
+	splitCriteria := strings.Split(stringCriteria, " ")
 	if len(splitCriteria) != 2 {
 		return nil
 	}
@@ -185,20 +149,27 @@ func parseCountCriteria(criteria string) *CountCriteria {
 		return nil
 	}
 
-	minCount, err := strconv.Atoi(counts[0])
+	first, err := strconv.Atoi(counts[0])
 	if err != nil {
 		log.Fatal(err)
 	}
-	maxCount, err := strconv.Atoi(counts[1])
+	second, err := strconv.Atoi(counts[1])
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return &CountCriteria{
-		letter:   splitCriteria[1],
-		minCount: minCount,
-		maxCount: maxCount,
+	return &criteria{
+		letter: splitCriteria[1],
+		first:  first,
+		second: second,
 	}
+}
+
+func parseIndexCriteria(criteria string) *criteria {
+	parsedCriteria := parseCriteria(criteria)
+	parsedCriteria.first -= 1
+	parsedCriteria.second -= 1
+	return parsedCriteria
 }
 
 func memoisePassword(password string) map[string]int {
