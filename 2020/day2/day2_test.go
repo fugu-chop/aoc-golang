@@ -19,7 +19,28 @@ func TestCheckCountsCompliance(t *testing.T) {
 		t.Run(tc.testCase, func(t *testing.T) {
 			got := checkCountsCompliance(tc.input)
 			if got != tc.want {
-				t.Errorf("checkCompliance(), got: %t, want: %t", got, tc.want)
+				t.Errorf("checkCountsCompliance(), got: %t, want: %t", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestCheckPositionCompliance(t *testing.T) {
+	tests := []struct {
+		testCase string
+		input    string
+		want     bool
+	}{
+		{"compliant password", "3-4 c: cctc", true},
+		{"non-compliant password - no match", "1-3 b: cdefg", false},
+		{"non-compliant password - double match", "3-4 c: cccc", false},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.testCase, func(t *testing.T) {
+			got := checkPositionCompliance(tc.input)
+			if got != tc.want {
+				t.Errorf("checkPositionCompliance(), got: %t, want: %t", got, tc.want)
 			}
 		})
 	}
