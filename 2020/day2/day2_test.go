@@ -5,25 +5,25 @@ import (
 	"testing"
 )
 
-// func TestCheckCountsCompliance(t *testing.T) {
-// 	tests := []struct {
-// 		testCase string
-// 		input    string
-// 		want     bool
-// 	}{
-// 		{"compliant password", "3-4 c: cctc", true},
-// 		{"non-compliant password", "1-3 b: cdefg", false},
-// 	}
+func TestCheckCountsCompliance(t *testing.T) {
+	tests := []struct {
+		testCase string
+		input    string
+		want     bool
+	}{
+		{"compliant password", "3-4 c: cctc", true},
+		{"non-compliant password", "1-3 b: cdefg", false},
+	}
 
-// 	for _, tc := range tests {
-// 		t.Run(tc.testCase, func(t *testing.T) {
-// 			got := checkCountsCompliance(tc.input)
-// 			if got != tc.want {
-// 				t.Errorf("checkCompliance(), got: %t, want: %t", got, tc.want)
-// 			}
-// 		})
-// 	}
-// }
+	for _, tc := range tests {
+		t.Run(tc.testCase, func(t *testing.T) {
+			got := checkCountsCompliance(tc.input)
+			if got != tc.want {
+				t.Errorf("checkCompliance(), got: %t, want: %t", got, tc.want)
+			}
+		})
+	}
+}
 
 func TestParseCriteria(t *testing.T) {
 	tests := []struct {
