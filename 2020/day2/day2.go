@@ -10,10 +10,17 @@ import (
 	"strings"
 )
 
+// Combine these to a single type
 type CountCriteria struct {
 	letter   string
 	minCount int
 	maxCount int
+}
+
+type IndexCriteria struct {
+	letter      string
+	firstIndex  int
+	secondIndex int
 }
 
 func main() {
@@ -23,8 +30,9 @@ func main() {
 			3-11 z: zzzzzdzzzzlzz
 
 			Format is x-y z where:
-				x is the 'positive' position - MUST contain the letter
-				y is the 'negative' position - MUST NOT contain the letter
+				x and y are 'positions' the n-th character of the string
+					EITHER BUT NOT BOTH must be true
+					e.g. for our example, idx: 2 OR idx: 10 must be "z", but not both
 				z is the letter of the alphabet
 
 			NOTE position != index:
@@ -37,6 +45,7 @@ func main() {
 		Edge Cases
 			- Based on manually reading the input file, no uppercase
 			- will always have a lower and upper bound represented as "integer"
+			- min is 1, max is no larger than string length
 
 		Data Structures
 			- Throwaway slices for string splitting
@@ -63,7 +72,7 @@ func main() {
 	*/
 
 	fileLocation := flag.String("inputLocation", "input.txt", "the location where the input file is")
-	variant := flag.Int("part", 1, "which part of the solution is attempted")
+	variant := flag.Int("part", 2, "which part of the solution is attempted")
 	flag.Parse()
 
 	file, err := os.Open(*fileLocation)
@@ -77,6 +86,7 @@ func main() {
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
+		// switch statement
 		if *variant == 1 {
 			if checkCountsCompliance(scanner.Text()) {
 				validCounts += 1
@@ -84,7 +94,7 @@ func main() {
 		}
 
 		if *variant == 2 {
-			if checkIndexCompliance(scanner.Text()) {
+			if checkPositionCompliance(scanner.Text()) {
 				validCounts += 1
 			}
 		}
@@ -97,9 +107,20 @@ func main() {
 	fmt.Println(validCounts)
 }
 
-func checkIndexCompliance(line string) bool {
+/*
+checkPositionCompliance expects a string in the form of 9-14 d: ddddbdddddddxfdd
+it will handle trimming of whitespaces
+*/
+func checkPositionCompliance(line string) bool {
 	components := strings.Split(line, ":")
-	_ = components
+	// can probably pass as func args
+	criteria := parseIndexCriteria(components[0])
+	positions := findPasswordPositions(components[1], criteria.firstIndex, criteria.secondIndex)
+
+	if (positions[criteria.firstIndex] == criteria.letter && positions[criteria.secondIndex] != criteria.letter) ||
+		(positions[criteria.firstIndex] != criteria.letter && positions[criteria.secondIndex] == criteria.letter) {
+		return true
+	}
 
 	return false
 }
@@ -119,6 +140,34 @@ func checkCountsCompliance(line string) bool {
 	}
 
 	return false
+}
+
+func parseIndexCriteria(criteria string) *IndexCriteria {
+	// extract to method
+	splitCriteria := strings.Split(criteria, " ")
+	if len(splitCriteria) != 2 {
+		return nil
+	}
+
+	counts := strings.Split(splitCriteria[0], "-")
+	if len(counts) != 2 {
+		return nil
+	}
+
+	minCount, err := strconv.Atoi(counts[0])
+	if err != nil {
+		log.Fatal(err)
+	}
+	maxCount, err := strconv.Atoi(counts[1])
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return &IndexCriteria{
+		letter:      splitCriteria[1],
+		firstIndex:  minCount - 1,
+		secondIndex: maxCount - 1,
+	}
 }
 
 /*
@@ -162,4 +211,15 @@ func memoisePassword(password string) map[string]int {
 	}
 
 	return counts
+}
+
+func findPasswordPositions(password string, firstIndex, secondIndex int) map[int]string {
+	positions := map[int]string{}
+	cleanedPassword := strings.TrimSpace(password)
+	letterSlice := strings.Split(cleanedPassword, "")
+
+	positions[firstIndex] = letterSlice[firstIndex]
+	positions[secondIndex] = letterSlice[secondIndex]
+
+	return positions
 }
