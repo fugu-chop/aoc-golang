@@ -6,7 +6,7 @@ import (
 )
 
 func TestCheckCountsCompliance(t *testing.T) {
-	data := []struct {
+	tests := []struct {
 		testCase string
 		input    string
 		want     bool
@@ -15,18 +15,18 @@ func TestCheckCountsCompliance(t *testing.T) {
 		{"non-compliant password", "1-3 b: cdefg", false},
 	}
 
-	for _, d := range data {
-		t.Run(d.testCase, func(t *testing.T) {
-			got := checkCountsCompliance(d.input)
-			if got != d.want {
-				t.Errorf("checkCompliance(), got: %t, want: %t", got, d.want)
+	for _, tc := range tests {
+		t.Run(tc.testCase, func(t *testing.T) {
+			got := checkCountsCompliance(tc.input)
+			if got != tc.want {
+				t.Errorf("checkCompliance(), got: %t, want: %t", got, tc.want)
 			}
 		})
 	}
 }
 
 func TestParseCriteria(t *testing.T) {
-	data := []struct {
+	tests := []struct {
 		testCase string
 		input    string
 		want     *CountCriteria
@@ -42,19 +42,19 @@ func TestParseCriteria(t *testing.T) {
 		}},
 	}
 
-	for _, d := range data {
-		t.Run(d.testCase, func(t *testing.T) {
-			got := parseCountCriteria(d.input)
+	for _, tc := range tests {
+		t.Run(tc.testCase, func(t *testing.T) {
+			got := parseCountCriteria(tc.input)
 
-			if !reflect.DeepEqual(got, d.want) {
-				t.Errorf("parseCriteria(), got: %v, want: %v", got, d.want)
+			if !reflect.DeepEqual(got, tc.want) {
+				t.Errorf("parseCriteria(), got: %v, want: %v", got, tc.want)
 			}
 		})
 	}
 }
 
 func TestMemoisePassword(t *testing.T) {
-	data := []struct {
+	tests := []struct {
 		testCase string
 		input    string
 		want     map[string]int
@@ -76,11 +76,11 @@ func TestMemoisePassword(t *testing.T) {
 		}},
 	}
 
-	for _, d := range data {
-		t.Run(d.testCase, func(t *testing.T) {
-			got := memoisePassword(d.input)
-			if !reflect.DeepEqual(got, d.want) {
-				t.Errorf("memoisePassword(), got: %v, want: %v", got, d.want)
+	for _, tc := range tests {
+		t.Run(tc.testCase, func(t *testing.T) {
+			got := memoisePassword(tc.input)
+			if !reflect.DeepEqual(got, tc.want) {
+				t.Errorf("memoisePassword(), got: %v, want: %v", got, tc.want)
 			}
 		})
 	}
