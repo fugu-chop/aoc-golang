@@ -18,53 +18,6 @@ type criteria struct {
 }
 
 func main() {
-	/*
-		Problem
-			get an input of passwords and policies in the format
-			3-11 z: zzzzzdzzzzlzz
-
-			Format is x-y z where:
-				x and y are 'positions' the n-th character of the string
-					EITHER BUT NOT BOTH must be true
-					e.g. for our example, idx: 2 OR idx: 10 must be "z", but not both
-				z is the letter of the alphabet
-
-			NOTE position != index:
-				index 0 == position 1
-
-			Password must meet both criteria to be compliant.
-
-			Our job is to return an int, representing the total number of compliant passwords
-
-		Edge Cases
-			- Based on manually reading the input file, no uppercase
-			- will always have a lower and upper bound represented as "integer"
-			- min is 1, max is no larger than string length
-
-		Data Structures
-			- Throwaway slices for string splitting
-			- Map for the password calculation
-			- int Var for tracking compliant passwords
-			- Custom type for criteria is easiest
-
-		Algo
-			We will need to parse an input file, row by row, ideally (use scanner)
-			For each line (iterate):
-				Split on `:` character, this will give a slice of two elements, a 'guide' and pw
-
-				Password:
-					- Trim whitespace
-					- We don't even need to memoise, just need to access an index of a string
-						- Can probably convert string(password[idx])
-					- Need an out of bounds index check on the string to avoid panics
-
-				Criteria:
-					- Split by space, turn into a type
-					- We need to convert our 'positions' into indexes (position - 1)
-
-			Return intVar
-	*/
-
 	fileLocation := flag.String("inputLocation", "input.txt", "the location where the input file is")
 	variant := flag.Int("part", 2, "which part of the solution is attempted")
 	flag.Parse()
@@ -105,7 +58,6 @@ it will handle trimming of whitespaces
 */
 func checkPositionCompliance(line string) bool {
 	components := strings.Split(line, ":")
-	// can probably pass as func args
 	criteria := parseIndexCriteria(components[0])
 	positions := findPasswordPositions(components[1], criteria.first, criteria.second)
 
