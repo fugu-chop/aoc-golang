@@ -53,6 +53,30 @@ func TestParseCriteria(t *testing.T) {
 	}
 }
 
+func TestParseIndexCriteria(t *testing.T) {
+	tests := []struct {
+		testCase string
+		input    string
+		want     *criteria
+	}{
+		{"valid criteria", "3-7 z", &criteria{
+			letter: "z",
+			first:  2,
+			second: 6,
+		}},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.testCase, func(t *testing.T) {
+			got := parseIndexCriteria(tc.input)
+
+			if !reflect.DeepEqual(got, tc.want) {
+				t.Errorf("parseCriteria(), got: %v, want: %v", got, tc.want)
+			}
+		})
+	}
+}
+
 func TestMemoisePassword(t *testing.T) {
 	tests := []struct {
 		testCase string
