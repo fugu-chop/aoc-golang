@@ -1,5 +1,18 @@
 package main
 
+import (
+	"bufio"
+	"fmt"
+	"log"
+	"os"
+	"strings"
+)
+
+var (
+	horizontalJumps = 3
+	verticalJumps   = 1
+)
+
 func main() {
 	/*
 		Problem
@@ -53,4 +66,24 @@ func main() {
 
 			Print counter variable
 	*/
+
+	file, err := os.Open("./input.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	coordinates := map[int][]string{}
+	coordinateIdx := 0
+	coordinatesHeight := 0
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		coordinates[coordinateIdx] = strings.Split(scanner.Text(), "")
+		coordinateIdx += 1
+	}
+
+	coordinatesHeight = len(coordinates)
+
+	fmt.Println(coordinatesHeight)
 }
