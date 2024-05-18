@@ -75,7 +75,6 @@ func main() {
 
 	coordinates := map[int][]string{}
 	coordinateIdx := 0
-	coordinatesHeight := 0
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -83,7 +82,9 @@ func main() {
 		coordinateIdx += 1
 	}
 
-	coordinatesHeight = len(coordinates)
+	coordinatesHeight := len(coordinates)
+	coordinatesWidth := len(coordinates[0])
 
 	fmt.Println(coordinatesHeight)
+	fmt.Println(coordinatesWidth)
 }
