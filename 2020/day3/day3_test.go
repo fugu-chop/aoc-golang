@@ -43,3 +43,21 @@ func Test_updateCurrentRowIdx(t *testing.T) {
 		})
 	}
 }
+
+func Test_calculateTreesHit(t *testing.T) {
+	tests := map[string]struct {
+		coordinate coordinate
+		want       int
+	}{
+		"calculates trees hit": {},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			got := calculateTreesHit(tc.coordinate)
+			if got != tc.want {
+				t.Errorf("calculateTreesHit(): got: %d, want: %d", got, tc.want)
+			}
+		})
+	}
+}
