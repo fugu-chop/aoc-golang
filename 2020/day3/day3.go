@@ -15,6 +15,12 @@ var (
 	treeChar       = "#"
 )
 
+type coordinate struct {
+	height      int
+	width       int
+	coordinates map[int][]string
+}
+
 func main() {
 	/*
 		Problem
@@ -91,11 +97,13 @@ func main() {
 	coordinatesHeight := len(coordinates)
 	coordinatesWidth := len(coordinates[0])
 
+	// TODO:
+	// update test for calculateTrees
 	// create an array of treesHit
 	// create a new func to reduce array of treesHit
 	// run func for each scenario, changing vars on each iteration
 
-	treesHit := calculateTrees(coordinatesHeight, coordinatesWidth, coordinates)
+	treesHit := calculateTreesHit(coordinatesHeight, coordinatesWidth, coordinates)
 
 	fmt.Printf("trees hit: %d\n", treesHit)
 }
@@ -129,7 +137,7 @@ func updateCurrentRowIdx(currentRowIdx, rowLength int) int {
 	return currentRowIdx + horizontalJump
 }
 
-func calculateTrees(coordinatesHeight, coordinatesWidth int, coordinates map[int][]string) int {
+func calculateTreesHit(coordinatesHeight, coordinatesWidth int, coordinates map[int][]string) int {
 	var treesHit int
 	var currentRowIdx int
 	var currentHeight int
