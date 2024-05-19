@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -67,6 +68,8 @@ func main() {
 
 			Print counter variable
 	*/
+	flag.Int("part", 1, "define which problem part the solution should attempt to solve")
+	flag.Parse()
 
 	file, err := os.Open("./input.txt")
 	if err != nil {
@@ -77,6 +80,8 @@ func main() {
 	coordinates := map[int][]string{}
 	coordinateIdx := 0
 
+	// could potentially extract to test, show that it populates correctly
+	// use a golden file
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		coordinates[coordinateIdx] = strings.Split(scanner.Text(), "")
@@ -86,16 +91,11 @@ func main() {
 	coordinatesHeight := len(coordinates)
 	coordinatesWidth := len(coordinates[0])
 
-	var treesHit int
-	var currentRowIdx int
-	var currentHeight int
+	// create an array of treesHit
+	// create a new func to reduce array of treesHit
+	// run func for each scenario, changing vars on each iteration
 
-	for currentHeight < coordinatesHeight {
-		row := coordinates[currentHeight]
-		treesHit += countTrees(currentRowIdx, row)
-		currentRowIdx = updateCurrentRowIdx(currentRowIdx, coordinatesWidth)
-		currentHeight += verticalJump
-	}
+	treesHit := calculateTrees(coordinatesHeight, coordinatesWidth, coordinates)
 
 	fmt.Printf("trees hit: %d\n", treesHit)
 }
@@ -127,4 +127,19 @@ func updateCurrentRowIdx(currentRowIdx, rowLength int) int {
 		return currentRowIdx - rowLength + horizontalJump
 	}
 	return currentRowIdx + horizontalJump
+}
+
+func calculateTrees(coordinatesHeight, coordinatesWidth int, coordinates map[int][]string) int {
+	var treesHit int
+	var currentRowIdx int
+	var currentHeight int
+
+	for currentHeight < coordinatesHeight {
+		row := coordinates[currentHeight]
+		treesHit += countTrees(currentRowIdx, row)
+		currentRowIdx = updateCurrentRowIdx(currentRowIdx, coordinatesWidth)
+		currentHeight += verticalJump
+	}
+
+	return treesHit
 }
