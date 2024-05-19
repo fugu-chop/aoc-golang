@@ -116,6 +116,12 @@ func countTrees(currentRowIdx int, row []string) int {
 	return trees
 }
 
+/*
+updateCurrentRowIdx updates where the horizontal position of the person
+is after each move down vertically. It handles the situation where a horizontal
+jump would land them out of bounds by subtracting the out of bounds index from
+the max row length incremented by the horizontal jump.
+*/
 func updateCurrentRowIdx(currentRowIdx, rowLength int) int {
 	if (currentRowIdx + horizontalJump) >= rowLength {
 		return currentRowIdx - rowLength + horizontalJump
