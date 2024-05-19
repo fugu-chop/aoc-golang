@@ -15,6 +15,7 @@ var (
 	treeChar       = "#"
 )
 
+// Move to another package?
 type coordinate struct {
 	height      int
 	width       int
@@ -83,12 +84,13 @@ func main() {
 	}
 	defer file.Close()
 
+	// could potentially extract to test - e.g. generateCoordinates, show that it populates correctly
+	// use a golden file
+
 	coordinate := new(coordinate)
 	coordinate.coordinates = map[int][]string{}
 	coordinateIdx := 0
 
-	// could potentially extract to test, show that it populates correctly
-	// use a golden file
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		coordinate.coordinates[coordinateIdx] = strings.Split(scanner.Text(), "")
@@ -99,12 +101,16 @@ func main() {
 	coordinate.width = len(coordinate.coordinates[0])
 
 	// TODO:
-	// update test for calculateTrees
+	// Pt 1
+	// update test for calculateTreesHit
+
+	// Pt 2
+	// update logic for vertical jump OOB scenario
 	// create an array of treesHit
 	// create a new func to reduce array of treesHit
 	// run func for each scenario, changing vars on each iteration
 
-	treesHit := calculateTreesHit(*coordinate)
+	treesHit := coordinate.calculateTreesHit()
 
 	fmt.Printf("trees hit: %d\n", treesHit)
 }
@@ -113,7 +119,7 @@ func main() {
 countTrees parses a slice of strings, incrementing a count
 when encountering the tree character.
 */
-func countTrees(currentRowIdx int, row []string) int {
+func (c *coordinate) countTrees(currentRowIdx int, row []string) int {
 	var trees int
 	if currentRowIdx > len(row) {
 		return trees
@@ -131,22 +137,27 @@ is after each move down vertically. It handles the situation where a horizontal
 jump would land them out of bounds by subtracting the out of bounds index from
 the max row length incremented by the horizontal jump.
 */
-func updateCurrentRowIdx(currentRowIdx, rowLength int) int {
+func (c *coordinate) updateCurrentRowIdx(currentRowIdx, rowLength int) int {
 	if (currentRowIdx + horizontalJump) >= rowLength {
 		return currentRowIdx - rowLength + horizontalJump
 	}
 	return currentRowIdx + horizontalJump
 }
 
-func calculateTreesHit(coordinateObj coordinate) int {
-	var treesHit int
-	var currentRowIdx int
-	var currentHeight int
+/*
+calculateTreesHit iterates over the coordinate typed object and calculates
+the number of trees hit using the global variables that define the horizontal
+and vertical jumps. It handles scenarios where the horizontal jump exceeds
+the horizontal length of a row
+*/
+func (c *coordinate) calculateTreesHit() int {
+	var treesHit, currentRowIdx, currentHeight int
 
-	for currentHeight < coordinateObj.height {
-		row := coordinateObj.coordinates[currentHeight]
-		treesHit += countTrees(currentRowIdx, row)
-		currentRowIdx = updateCurrentRowIdx(currentRowIdx, coordinateObj.width)
+	for currentHeight < c.height {
+		row := c.coordinates[currentHeight]
+		treesHit += c.countTrees(currentRowIdx, row)
+		currentRowIdx = c.updateCurrentRowIdx(currentRowIdx, c.width)
+		// Will need a separate method to handle OOB vertical jump
 		currentHeight += verticalJump
 	}
 

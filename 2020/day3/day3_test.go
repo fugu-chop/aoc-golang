@@ -14,8 +14,9 @@ func Test_countTrees(t *testing.T) {
 	}
 
 	for test, tc := range tests {
+		c := coordinate{}
 		t.Run(test, func(t *testing.T) {
-			got := countTrees(tc.currentRowIdx, tc.row)
+			got := c.countTrees(tc.currentRowIdx, tc.row)
 			if got != tc.want {
 				t.Errorf("countTrees: got: %d, want: %d", got, tc.want)
 			}
@@ -35,8 +36,9 @@ func Test_updateCurrentRowIdx(t *testing.T) {
 	}
 
 	for name, tc := range tests {
+		c := coordinate{}
 		t.Run(name, func(t *testing.T) {
-			got := updateCurrentRowIdx(tc.currentRowIdx, tc.rowLength)
+			got := c.updateCurrentRowIdx(tc.currentRowIdx, tc.rowLength)
 			if got != tc.want {
 				t.Errorf("updateCurrentRowIdx(): got: %d, want: %d", got, tc.want)
 			}
@@ -53,8 +55,9 @@ func Test_calculateTreesHit(t *testing.T) {
 	}
 
 	for name, tc := range tests {
+		c := coordinate{}
 		t.Run(name, func(t *testing.T) {
-			got := calculateTreesHit(tc.coordinate)
+			got := c.calculateTreesHit()
 			if got != tc.want {
 				t.Errorf("calculateTreesHit(): got: %d, want: %d", got, tc.want)
 			}
