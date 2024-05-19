@@ -29,8 +29,9 @@ func Test_updateCurrentRowIdx(t *testing.T) {
 		rowLength     int
 		want          int
 	}{
-		"updates when not out of bounds": {0, 10, 3},
-		"updates when out of bounds":     {8, 10, 1},
+		"updates when not out of bounds":              {0, 10, 3},
+		"updates when out of bounds":                  {8, 10, 1},
+		"handles when currentRowIdx is out of bounds": {11, 10, 4},
 	}
 
 	for name, tc := range tests {
