@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	horizontalJumps = 3
-	verticalJumps   = 1
+	horizontalJump = 3
+	verticalJump   = 1
+	treeChar       = "#"
 )
 
 func main() {
@@ -85,6 +86,39 @@ func main() {
 	coordinatesHeight := len(coordinates)
 	coordinatesWidth := len(coordinates[0])
 
-	fmt.Println(coordinatesHeight)
-	fmt.Println(coordinatesWidth)
+	var treesHit int
+	var currentRowIdx int
+	var currentHeight int
+
+	for currentHeight < coordinatesHeight {
+		row := coordinates[currentHeight]
+		treesHit += countTrees(currentRowIdx, row)
+		currentRowIdx = updateCurrentRowIdx(currentRowIdx, coordinatesWidth)
+		currentHeight += verticalJump
+	}
+
+	fmt.Printf("trees hit: %d\n", treesHit)
+}
+
+/*
+countTrees parses a slice of strings, incrementing a count
+when encountering the tree character.
+*/
+func countTrees(currentRowIdx int, row []string) int {
+	var trees int
+	if currentRowIdx > len(row) {
+		return trees
+	}
+
+	if row[currentRowIdx] == treeChar {
+		trees += 1
+	}
+	return trees
+}
+
+func updateCurrentRowIdx(currentRowIdx, rowLength int) int {
+	if (currentRowIdx + horizontalJump) >= rowLength {
+		return currentRowIdx - rowLength + horizontalJump
+	}
+	return currentRowIdx + horizontalJump
 }
