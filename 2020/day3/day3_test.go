@@ -51,11 +51,54 @@ func Test_calculateTreesHit(t *testing.T) {
 		coordinate coordinate
 		want       int
 	}{
-		"calculates trees hit": {},
+		"calculates trees hit": {
+			coordinate: coordinate{
+				height: 2,
+				width:  4,
+				coordinates: map[int][]string{
+					0: {".", ".", ".", ".", "."},
+					1: {".", ".", ".", "#", "."},
+				},
+			},
+			want: 1,
+		},
+		"handles extra width": {
+			coordinate: coordinate{
+				height: 2,
+				width:  10,
+				coordinates: map[int][]string{
+					0: {".", ".", ".", ".", ".", "#"},
+					1: {".", ".", ".", "#", ".", "#"},
+				},
+			},
+			want: 1,
+		},
+		"handles less width": {
+			coordinate: coordinate{
+				height: 2,
+				width:  1,
+				coordinates: map[int][]string{
+					0: {".", ".", ".", ".", ".", "#"},
+					1: {".", ".", ".", "#", ".", "#"},
+				},
+			},
+			want: 0,
+		},
+		"handles zero height": {
+			coordinate: coordinate{
+				height: 0,
+				width:  5,
+				coordinates: map[int][]string{
+					0: {".", ".", ".", ".", ".", "#"},
+					1: {".", ".", ".", "#", ".", "#"},
+				},
+			},
+			want: 0,
+		},
 	}
 
 	for name, tc := range tests {
-		c := coordinate{}
+		c := tc.coordinate
 		t.Run(name, func(t *testing.T) {
 			got := c.calculateTreesHit()
 			if got != tc.want {

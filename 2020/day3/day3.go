@@ -88,7 +88,7 @@ func main() {
 	// use a golden file
 
 	coordinate := new(coordinate)
-	coordinate.coordinates = map[int][]string{}
+	coordinate.coordinates = make(map[int][]string)
 	coordinateIdx := 0
 
 	scanner := bufio.NewScanner(file)
@@ -105,10 +105,13 @@ func main() {
 	// update test for calculateTreesHit
 
 	// Pt 2
-	// update logic for vertical jump OOB scenario
 	// create an array of treesHit
 	// create a new func to reduce array of treesHit
-	// run func for each scenario, changing vars on each iteration
+	// run func for each scenario, changing vars on each iteration,
+	// saving horizontal and verticalJumps as a type, append to a slice
+
+	// Maybe
+	// extract file parsing to function, write test?
 
 	treesHit := coordinate.calculateTreesHit()
 
@@ -157,7 +160,6 @@ func (c *coordinate) calculateTreesHit() int {
 		row := c.coordinates[currentHeight]
 		treesHit += c.countTrees(currentRowIdx, row)
 		currentRowIdx = c.updateCurrentRowIdx(currentRowIdx, c.width)
-		// Will need a separate method to handle OOB vertical jump
 		currentHeight += verticalJump
 	}
 
