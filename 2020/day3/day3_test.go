@@ -1,6 +1,12 @@
 package main
 
-import "testing"
+import (
+	"bufio"
+	"os"
+	"reflect"
+	"strings"
+	"testing"
+)
 
 func Test_countTrees(t *testing.T) {
 	tests := map[string]struct {
@@ -105,5 +111,35 @@ func Test_calculateTreesHit(t *testing.T) {
 				t.Errorf("calculateTreesHit(): got: %d, want: %d", got, tc.want)
 			}
 		})
+	}
+}
+
+func Test_generateCoordinate(t *testing.T) {
+	wantHeight, wantWidth := 5, 11
+	wantCoordinate := map[int][]string{
+		0: strings.Split("..##.......", ""),
+		1: strings.Split("#...#...#..", ""),
+		2: strings.Split(".#....#..#.", ""),
+		3: strings.Split("..#.#...#.#", ""),
+		4: strings.Split(".#...##..#.", ""),
+	}
+
+	file, err := os.Open("./test_golden_file.txt")
+	if err != nil {
+		t.Fatalf("generateCoordinate(): could not open file: %+v", err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	got := generateCoordinates(scanner)
+
+	if got.height != wantHeight {
+		t.Errorf("generateCoordinate(): incorrect height: %d, want: %d", got.height, wantHeight)
+	}
+	if got.width != wantWidth {
+		t.Errorf("generateCoordinate(): incorrect width: %d, want: %d", got.width, wantWidth)
+	}
+	if !reflect.DeepEqual(got.coordinates, wantCoordinate) {
+		t.Errorf("generateCoordinate(): incorrect map generated: %+v, want: %+v", got.coordinates, wantCoordinate)
 	}
 }

@@ -15,7 +15,6 @@ var (
 	treeChar       = "#"
 )
 
-// Move to another package?
 type coordinate struct {
 	height      int
 	width       int
@@ -84,34 +83,15 @@ func main() {
 	}
 	defer file.Close()
 
-	// could potentially extract to test - e.g. generateCoordinates, show that it populates correctly
-	// use a golden file
-
-	coordinate := new(coordinate)
-	coordinate.coordinates = make(map[int][]string)
-	coordinateIdx := 0
-
 	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		coordinate.coordinates[coordinateIdx] = strings.Split(scanner.Text(), "")
-		coordinateIdx += 1
-	}
-
-	coordinate.height = len(coordinate.coordinates)
-	coordinate.width = len(coordinate.coordinates[0])
+	coordinate := generateCoordinates(scanner)
 
 	// TODO:
-	// Pt 1
-	// update test for calculateTreesHit
-
 	// Pt 2
 	// create an array of treesHit
 	// create a new func to reduce array of treesHit
 	// run func for each scenario, changing vars on each iteration,
 	// saving horizontal and verticalJumps as a type, append to a slice
-
-	// Maybe
-	// extract file parsing to function, write test?
 
 	treesHit := coordinate.calculateTreesHit()
 
@@ -164,4 +144,24 @@ func (c *coordinate) calculateTreesHit() int {
 	}
 
 	return treesHit
+}
+
+/*
+generateCoordinates takes in a pointer to a bufio.Scanner interface
+and returns a coordinate type
+*/
+func generateCoordinates(scanner *bufio.Scanner) *coordinate {
+	coordinate := new(coordinate)
+	coordinate.coordinates = make(map[int][]string)
+	coordinateIdx := 0
+
+	for scanner.Scan() {
+		coordinate.coordinates[coordinateIdx] = strings.Split(scanner.Text(), "")
+		coordinateIdx += 1
+	}
+
+	coordinate.height = len(coordinate.coordinates)
+	coordinate.width = len(coordinate.coordinates[0])
+
+	return coordinate
 }
