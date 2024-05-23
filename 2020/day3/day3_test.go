@@ -117,7 +117,7 @@ func Test_calculateTreesHit(t *testing.T) {
 }
 
 func Test_generateCoordinate(t *testing.T) {
-	fileLocation := setGoldenFile()
+	fileLocation := "./test_golden_file.txt"
 
 	wantHeight, wantWidth := 5, 11
 	wantCoordinate := map[int][]string{
@@ -130,7 +130,11 @@ func Test_generateCoordinate(t *testing.T) {
 
 	file, err := os.Open(fileLocation)
 	if err != nil {
-		t.Fatalf("generateCoordinate(): could not open file: %+v", err)
+		setGoldenFile(fileLocation)
+		file, err = os.Open(fileLocation)
+		if err != nil {
+			t.Fatalf("generateCoordinate(): could not open file: %+v", err)
+		}
 	}
 	defer file.Close()
 
@@ -148,7 +152,7 @@ func Test_generateCoordinate(t *testing.T) {
 	}
 }
 
-func setGoldenFile() string {
+func setGoldenFile(fileLocation string) {
 	goldenSample := []string{
 		"..##.......",
 		"#...#...#..",
@@ -156,7 +160,6 @@ func setGoldenFile() string {
 		"..#.#...#.#",
 		".#...##..#.",
 	}
-	fileLocation := "./test_golden_file.txt"
 
 	file, err := os.OpenFile(fileLocation, os.O_APPEND|os.O_CREATE|os.O_RDWR, os.ModePerm)
 	if err != nil {
@@ -167,6 +170,4 @@ func setGoldenFile() string {
 	for _, row := range goldenSample {
 		file.WriteString(fmt.Sprintf("%+v\n", row))
 	}
-
-	return fileLocation
 }
