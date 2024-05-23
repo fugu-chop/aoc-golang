@@ -133,7 +133,7 @@ func Test_generateCoordinate(t *testing.T) {
 		setGoldenFile(fileLocation)
 		file, err = os.Open(fileLocation)
 		if err != nil {
-			t.Fatalf("generateCoordinate(): could not open file: %+v", err)
+			t.Fatalf("generateCoordinate(): could not open file at %s: %+v", fileLocation, err)
 		}
 	}
 	defer file.Close()
