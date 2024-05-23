@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"fmt"
+	"log"
 	"os"
 	"reflect"
 	"strings"
@@ -115,6 +117,8 @@ func Test_calculateTreesHit(t *testing.T) {
 }
 
 func Test_generateCoordinate(t *testing.T) {
+	fileLocation := setGoldenFile()
+
 	wantHeight, wantWidth := 5, 11
 	wantCoordinate := map[int][]string{
 		0: strings.Split("..##.......", ""),
@@ -124,7 +128,7 @@ func Test_generateCoordinate(t *testing.T) {
 		4: strings.Split(".#...##..#.", ""),
 	}
 
-	file, err := os.Open("./test_golden_file.txt")
+	file, err := os.Open(fileLocation)
 	if err != nil {
 		t.Fatalf("generateCoordinate(): could not open file: %+v", err)
 	}
@@ -142,4 +146,27 @@ func Test_generateCoordinate(t *testing.T) {
 	if !reflect.DeepEqual(got.coordinates, wantCoordinate) {
 		t.Errorf("generateCoordinate(): incorrect map generated: %+v, want: %+v", got.coordinates, wantCoordinate)
 	}
+}
+
+func setGoldenFile() string {
+	goldenSample := []string{
+		"..##.......",
+		"#...#...#..",
+		".#....#..#.",
+		"..#.#...#.#",
+		".#...##..#.",
+	}
+	fileLocation := "./test_golden_file.txt"
+
+	file, err := os.OpenFile(fileLocation, os.O_APPEND|os.O_CREATE|os.O_RDWR, os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	for _, row := range goldenSample {
+		file.WriteString(fmt.Sprintf("%+v\n", row))
+	}
+
+	return fileLocation
 }
