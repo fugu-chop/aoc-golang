@@ -127,11 +127,11 @@ is after each move down vertically. It handles the situation where a horizontal
 jump would land them out of bounds by subtracting the out of bounds index from
 the max row length incremented by the horizontal jump.
 */
-func (c *coordinate) updateCurrentRowIdx(currentRowIdx, rowLength int, jumps jump) int {
-	if (currentRowIdx + jumps.horizontal) >= rowLength {
-		return currentRowIdx - rowLength + jumps.horizontal
+func (c *coordinate) updateCurrentRowIdx(currentRowIdx, rowLength, jump int) int {
+	if (currentRowIdx + jump) >= rowLength {
+		return currentRowIdx - rowLength + jump
 	}
-	return currentRowIdx + jumps.horizontal
+	return currentRowIdx + jump
 }
 
 /*
@@ -146,7 +146,7 @@ func (c *coordinate) calculateTreesHit(jumps jump) int {
 	for currentHeight < c.height {
 		row := c.coordinates[currentHeight]
 		treesHit += c.countTrees(currentRowIdx, row)
-		currentRowIdx = c.updateCurrentRowIdx(currentRowIdx, c.width, jumps)
+		currentRowIdx = c.updateCurrentRowIdx(currentRowIdx, c.width, jumps.horizontal)
 		currentHeight += jumps.vertical
 	}
 
