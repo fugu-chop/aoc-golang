@@ -34,19 +34,20 @@ func Test_countTrees(t *testing.T) {
 
 func Test_updateCurrentRowIdx(t *testing.T) {
 	tests := map[string]struct {
-		currentRowIdx int
-		rowLength     int
-		want          int
+		currentRowIdx  int
+		rowLength      int
+		horizontalJump int
+		want           int
 	}{
-		"updates when not out of bounds":              {0, 10, 3},
-		"updates when out of bounds":                  {8, 10, 1},
-		"handles when currentRowIdx is out of bounds": {11, 10, 4},
+		"updates when not out of bounds":              {0, 10, 3, 3},
+		"updates when out of bounds":                  {8, 10, 3, 1},
+		"handles when currentRowIdx is out of bounds": {11, 10, 3, 4},
 	}
 
 	for name, tc := range tests {
 		c := coordinate{}
 		t.Run(name, func(t *testing.T) {
-			got := c.updateCurrentRowIdx(tc.currentRowIdx, tc.rowLength)
+			got := c.updateCurrentRowIdx(tc.currentRowIdx, tc.rowLength, tc.horizontalJump)
 			if got != tc.want {
 				t.Errorf("updateCurrentRowIdx(): got: %d, want: %d", got, tc.want)
 			}
@@ -57,6 +58,7 @@ func Test_updateCurrentRowIdx(t *testing.T) {
 func Test_calculateTreesHit(t *testing.T) {
 	tests := map[string]struct {
 		coordinate coordinate
+		jumps      jump
 		want       int
 	}{
 		"calculates trees hit": {
@@ -67,6 +69,10 @@ func Test_calculateTreesHit(t *testing.T) {
 					0: {".", ".", ".", ".", "."},
 					1: {".", ".", ".", "#", "."},
 				},
+			},
+			jumps: jump{
+				horizontal: 3,
+				vertical:   1,
 			},
 			want: 1,
 		},
@@ -79,6 +85,10 @@ func Test_calculateTreesHit(t *testing.T) {
 					1: {".", ".", ".", "#", ".", "#"},
 				},
 			},
+			jumps: jump{
+				horizontal: 3,
+				vertical:   1,
+			},
 			want: 1,
 		},
 		"handles less width": {
@@ -89,6 +99,10 @@ func Test_calculateTreesHit(t *testing.T) {
 					0: {".", ".", ".", ".", ".", "#"},
 					1: {".", ".", ".", "#", ".", "#"},
 				},
+			},
+			jumps: jump{
+				horizontal: 3,
+				vertical:   1,
 			},
 			want: 0,
 		},
@@ -101,6 +115,10 @@ func Test_calculateTreesHit(t *testing.T) {
 					1: {".", ".", ".", "#", ".", "#"},
 				},
 			},
+			jumps: jump{
+				horizontal: 3,
+				vertical:   1,
+			},
 			want: 0,
 		},
 	}
@@ -108,7 +126,7 @@ func Test_calculateTreesHit(t *testing.T) {
 	for name, tc := range tests {
 		c := tc.coordinate
 		t.Run(name, func(t *testing.T) {
-			got := c.calculateTreesHit()
+			got := c.calculateTreesHit(tc.jumps)
 			if got != tc.want {
 				t.Errorf("calculateTreesHit(): got: %d, want: %d", got, tc.want)
 			}
