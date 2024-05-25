@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -9,6 +10,12 @@ import (
 	"strings"
 	"testing"
 )
+
+var golden bool
+
+func init() {
+	flag.BoolVar(&golden, "update", false, "whether to generate a golden file on running tests")
+}
 
 func Test_countTrees(t *testing.T) {
 	tests := map[string]struct {
@@ -148,11 +155,14 @@ func Test_generateCoordinate(t *testing.T) {
 
 	file, err := os.Open(fileLocation)
 	if err != nil {
-		setGoldenFile(fileLocation)
+		if golden {
+			setGoldenFile(fileLocation)
+		}
 		file, err = os.Open(fileLocation)
 		if err != nil {
 			t.Fatalf("generateCoordinate(): could not open file at %s: %+v", fileLocation, err)
 		}
+
 	}
 	defer file.Close()
 
