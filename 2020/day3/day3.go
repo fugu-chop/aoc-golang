@@ -52,18 +52,13 @@ func main() {
 			jump{horizontal: 1, vertical: 2},
 		)
 	}
-	treesHit := []int{}
 
+	treesHit := 1
 	for _, jump := range jumps {
-		treesHit = append(treesHit, coordinate.calculateTreesHit(jump))
+		treesHit *= coordinate.calculateTreesHit(jump)
 	}
 
-	totalHit := 1
-	for _, hits := range treesHit {
-		totalHit *= hits
-	}
-
-	fmt.Printf("trees hit: %d\n", totalHit)
+	fmt.Printf("trees hit: %d\n", treesHit)
 }
 
 /*
