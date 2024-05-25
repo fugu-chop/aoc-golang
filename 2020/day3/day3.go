@@ -10,10 +10,13 @@ import (
 )
 
 var (
-	horizontalJump = 3
-	verticalJump   = 1
-	treeChar       = "#"
+	treeChar = "#"
 )
+
+type jump struct {
+	horizontal int
+	vertical   int
+}
 
 type coordinate struct {
 	height      int
@@ -92,8 +95,12 @@ func main() {
 	// create a new func to reduce array of treesHit
 	// run func for each scenario, changing vars on each iteration,
 	// saving horizontal and verticalJumps as a type, append to a slice
+	jumps := jump{
+		horizontal: 3,
+		vertical:   1,
+	}
 
-	treesHit := coordinate.calculateTreesHit()
+	treesHit := coordinate.calculateTreesHit(jumps)
 
 	fmt.Printf("trees hit: %d\n", treesHit)
 }
@@ -120,11 +127,11 @@ is after each move down vertically. It handles the situation where a horizontal
 jump would land them out of bounds by subtracting the out of bounds index from
 the max row length incremented by the horizontal jump.
 */
-func (c *coordinate) updateCurrentRowIdx(currentRowIdx, rowLength int) int {
-	if (currentRowIdx + horizontalJump) >= rowLength {
-		return currentRowIdx - rowLength + horizontalJump
+func (c *coordinate) updateCurrentRowIdx(currentRowIdx, rowLength int, jumps jump) int {
+	if (currentRowIdx + jumps.horizontal) >= rowLength {
+		return currentRowIdx - rowLength + jumps.horizontal
 	}
-	return currentRowIdx + horizontalJump
+	return currentRowIdx + jumps.horizontal
 }
 
 /*
@@ -133,14 +140,14 @@ the number of trees hit using the global variables that define the horizontal
 and vertical jumps. It handles scenarios where the horizontal jump exceeds
 the horizontal length of a row
 */
-func (c *coordinate) calculateTreesHit() int {
+func (c *coordinate) calculateTreesHit(jumps jump) int {
 	var treesHit, currentRowIdx, currentHeight int
 
 	for currentHeight < c.height {
 		row := c.coordinates[currentHeight]
 		treesHit += c.countTrees(currentRowIdx, row)
-		currentRowIdx = c.updateCurrentRowIdx(currentRowIdx, c.width)
-		currentHeight += verticalJump
+		currentRowIdx = c.updateCurrentRowIdx(currentRowIdx, c.width, jumps)
+		currentHeight += jumps.vertical
 	}
 
 	return treesHit
