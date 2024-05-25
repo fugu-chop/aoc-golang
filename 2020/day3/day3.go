@@ -77,7 +77,7 @@ func main() {
 
 			Print counter variable
 	*/
-	flag.Int("part", 1, "define which problem part the solution should attempt to solve")
+	part := flag.Int("part", 1, "define which problem part the solution should attempt to solve")
 	flag.Parse()
 
 	file, err := os.Open("./input.txt")
@@ -95,14 +95,33 @@ func main() {
 	// create a new func to reduce array of treesHit
 	// run func for each scenario, changing vars on each iteration,
 	// saving horizontal and verticalJumps as a type, append to a slice
-	jumps := jump{
-		horizontal: 3,
-		vertical:   1,
+	jumps := []jump{
+		{
+			horizontal: 3,
+			vertical:   1,
+		},
 	}
 
-	treesHit := coordinate.calculateTreesHit(jumps)
+	if *part == 2 {
+		jumps = append(jumps,
+			jump{horizontal: 1, vertical: 1},
+			jump{horizontal: 5, vertical: 1},
+			jump{horizontal: 7, vertical: 1},
+			jump{horizontal: 1, vertical: 2},
+		)
+	}
+	treesHit := []int{}
 
-	fmt.Printf("trees hit: %d\n", treesHit)
+	for _, jump := range jumps {
+		treesHit = append(treesHit, coordinate.calculateTreesHit(jump))
+	}
+
+	totalHit := 1
+	for _, hits := range treesHit {
+		totalHit *= hits
+	}
+
+	fmt.Printf("trees hit: %d\n", totalHit)
 }
 
 /*
