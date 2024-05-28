@@ -69,8 +69,10 @@ func main() {
 					*this is an assumption based on file contents*
 			- Take first element of `splitSlice`, check if exists in our map
 				- If not, NOT VALID
-			- If all fields are present, VALID
-				- increment validPassports
+			- If all fields are present, CONTINUE
+		- Also need to iterate over entries in requiredFields
+			- Handle basic scenario where we might have 6 fields that match
+		- increment validPassports
 	*/
 
 	// Ideally we would use scanner, but the presence of a newline at
@@ -80,7 +82,7 @@ func main() {
 		log.Fatal(err)
 	}
 	stringFile := string(file)
-	// Correctly break up passports into units
+	// Break up passports into units
 	passportList := strings.Split(stringFile, "\n\n")
 	validPassports := 0
 	for _, entry := range passportList {
@@ -133,7 +135,11 @@ func cleanPassport(passport string) []string {
 	return cleanedPassports
 }
 
-// Flip the logic - iterate over the fields in requiredFields
+/*
+validField checks for the validity of field-value pair by looking at
+whether the field exists within the accepted passport fields and if
+the value is a non-empty string.
+*/
 func validField(field string) bool {
 	var valid bool
 
@@ -152,8 +158,6 @@ func validField(field string) bool {
 		return true
 	}
 
-	// iterate over requiredFields
-	// maybe change to a slice comparison
 	val, ok := requiredFields[k]
 
 	if !ok || !val {
