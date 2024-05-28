@@ -86,8 +86,9 @@ func main() {
 	// Break up passports into units
 	passportList := strings.Split(stringFile, "\n\n")
 	validPassports := 0
+
 	for _, entry := range passportList {
-		if validatePassport(entry) {
+		if validPassport(entry) {
 			validPassports++
 		}
 	}
@@ -95,7 +96,14 @@ func main() {
 	fmt.Println(validPassports)
 }
 
-func validatePassport(passport string) bool {
+// TODO - add tests
+/*
+validPassport is a wrapper function that performs checks on the validity
+of a passport entry provided in an input file, returning a boolean that
+indicates whether a passport entry is valid per the AoC requirements.
+It performs string cleaning and parsing via several helper functions.
+*/
+func validPassport(passport string) bool {
 	var valid bool
 	passportFields := cleanPassport(passport)
 	if len(passportFields) < 7 || len(passportFields) > 8 {
@@ -108,7 +116,7 @@ func validatePassport(passport string) bool {
 			return valid
 		}
 	}
-
+	// Check if all fields in requiredFields exist within passportFields
 	cleanedFields := cleanedPassportFields(passportFields)
 	for field := range requiredFields {
 		if !slices.Contains(cleanedFields, field) {
@@ -121,6 +129,13 @@ func validatePassport(passport string) bool {
 	return valid
 }
 
+// TODO - add tests
+/*
+cleanedPassportFields takes a slice of strings, where each string takes
+the form of "field:value" (delimited by colon) and returns a slice of strings
+fields. cleanedPassport expects that each entry in cleanedPassport is already
+trimmed of whitespaces.
+*/
 func cleanedPassportFields(cleanedPassport []string) []string {
 	cleanedFields := []string{}
 
