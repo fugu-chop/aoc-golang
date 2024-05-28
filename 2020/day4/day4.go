@@ -140,7 +140,8 @@ func cleanPassport(passport string) []string {
 /*
 validField checks for the validity of field-value pair by looking at
 whether the field exists within the accepted passport fields and if
-the value is a non-empty string.
+the value is a non-empty string. It skips the check for the CID field
+as this is a non-mandatory field.
 */
 func validField(field string) bool {
 	var valid bool
