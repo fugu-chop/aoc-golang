@@ -95,10 +95,6 @@ func main() {
 	fmt.Println(validPassports)
 }
 
-/*
-ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
-byr:1937 iyr:2017 cid:147 hgt:183cm
-*/
 func validatePassport(passport string) bool {
 	var valid bool
 	passportFields := cleanPassport(passport)
@@ -121,6 +117,12 @@ func validatePassport(passport string) bool {
 	return valid
 }
 
+/*
+cleanPassport takes in a string of unformatted field-value pairs where
+each field-value pair is delimited by a space or newline between the next
+field-value pair. It returns a slice of field-value pairs with any leading
+or trailing whitespaces (including tabs) removed.
+*/
 func cleanPassport(passport string) []string {
 	cleanedPassports := []string{}
 
