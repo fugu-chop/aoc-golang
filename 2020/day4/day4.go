@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"slices"
 	"strings"
 )
 
 var (
-	fileLocation   = "./example.txt"
+	fileLocation   = "./input.txt"
 	requiredFields = map[string]bool{
 		"byr": true,
 		"iyr": true,
@@ -87,7 +88,6 @@ func main() {
 	validPassports := 0
 	for _, entry := range passportList {
 		if validatePassport(entry) {
-			fmt.Println(entry + "\n")
 			validPassports++
 		}
 	}
@@ -100,14 +100,18 @@ func validatePassport(passport string) bool {
 	passportFields := cleanPassport(passport)
 	if len(passportFields) < 7 || len(passportFields) > 8 {
 		return valid
-
 	}
+	// Check if fields all exist in requiredFields
 	for _, field := range passportFields {
-
-		// ALSO NEED TO CHECK NEGATIVE SCENARIO
-		// IF THE FIELD IS MISSING, WE WILL NEVER ITERATE OVER IT
-
 		if !validField(field) {
+			fmt.Println("invalid field: " + field)
+			return valid
+		}
+	}
+
+	cleanedFields := cleanedPassportFields(passportFields)
+	for field := range requiredFields {
+		if !slices.Contains(cleanedFields, field) {
 			return valid
 		}
 	}
@@ -115,6 +119,17 @@ func validatePassport(passport string) bool {
 	valid = true
 
 	return valid
+}
+
+func cleanedPassportFields(cleanedPassport []string) []string {
+	cleanedFields := []string{}
+
+	for _, entry := range cleanedPassport {
+		stringSlice := strings.Split(entry, ":")
+		cleanedFields = append(cleanedFields, stringSlice[0])
+	}
+
+	return cleanedFields
 }
 
 /*
