@@ -131,9 +131,7 @@ func validField(field string) bool {
 		return true
 	}
 
-	val, ok := requiredFields[k]
-
-	if !ok || !val {
+	if _, ok := requiredFields[k]; !ok {
 		return false
 	}
 
