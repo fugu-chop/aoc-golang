@@ -21,6 +21,11 @@ var (
 	}
 )
 
+// not sure, try!
+type criteria interface {
+	validate(interface{}) bool
+}
+
 func main() {
 	// Ideally we would use scanner, but the presence of a newline at
 	// end of the file breaks the iteration (will skip the last entry)
@@ -136,4 +141,42 @@ func validField(field string) bool {
 	}
 
 	return true
+}
+
+// Maybe some interface nonsense can be used?
+func validBirthYear(year int) func() bool {
+	return func() bool {
+		return year >= 1920 && year <= 2002
+	}
+}
+
+func validIssueYear(year int) func() bool {
+	return func() bool {
+		return year >= 2010 && year <= 2020
+	}
+}
+
+func validExpirationYear(year int) func() bool {
+	return func() bool {
+		return year >= 2020 && year <= 2030
+	}
+}
+
+func validEyeColour(colour string) func() bool {
+	validColours := []string{"amb", "blu", "brn", "gry", "grn", "hzl", "oth"}
+	return func() bool {
+		return slices.Contains(validColours, colour)
+	}
+}
+
+// valid hair colour probably needs regex
+
+// passport id - check entirely via regex?
+
+func validHeight(height string) func() bool {
+	// parse last two chars, check for in or cm
+
+	return func() bool {
+		return true
+	}
 }
