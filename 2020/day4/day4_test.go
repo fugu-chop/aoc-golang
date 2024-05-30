@@ -5,6 +5,33 @@ import (
 	"testing"
 )
 
+func Test_validPassport(t *testing.T) {
+	tests := map[string]struct {
+		input string
+		want  bool
+	}{
+		"handles valid passport": {"ecl:#eef340 eyr:2023 hcl:#c0946f pid:244684338 iyr:2020 byr:1969 hgt:152cm", true},
+		"handles unusual spacing": {`pid:303807545 cid:213 ecl:gry hcl:#fffffd
+eyr:2038 byr:1951
+hgt:171cm iyr:2011`, true},
+		"ignores CID field": {"ecl:#eef340 eyr:2023 hcl:#c0946f pid:244684338 iyr:2020 cid:57 byr:1969 hgt:152cm", true},
+		"handles invalid passports": {`iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884
+hcl:#cfa07d byr:1929`, false},
+		"short circuits short invalid passports": {`eyr:2023 pid:028048884`, false},
+		"short circuits long invalid passports":  {`eyr:2023 pid:028048884 eyr:2023 eyr:2023 eyr:2023 eyr:2023 eyr:2023 eyr:2023 eyr:2023`, false},
+		"short circuits invalid fields":          {"ecc:#eef340 eyr:2023 hcl:#c0946f pid:244684338 iyr:2020 byr:1969 hgt:152cm", false},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			got := validPassport(tc.input)
+			if got != tc.want {
+				t.Errorf("validPassport err - got: %t, want: %t", got, tc.want)
+			}
+		})
+	}
+}
+
 func Test_cleanedPassportFields(t *testing.T) {
 	tests := map[string]struct {
 		input []string

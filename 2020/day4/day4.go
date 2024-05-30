@@ -42,7 +42,6 @@ func main() {
 	fmt.Println(validPassports)
 }
 
-// TODO - add tests
 /*
 validPassport is a wrapper function that performs checks on the validity
 of a passport entry provided in an input file, returning a boolean that
@@ -57,7 +56,6 @@ func validPassport(passport string) bool {
 	// Check if fields all exist in requiredFields
 	for _, field := range passportFields {
 		if !validField(field) {
-			fmt.Println("invalid field: " + field)
 			return false
 		}
 	}
