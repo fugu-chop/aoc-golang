@@ -5,6 +5,36 @@ import (
 	"testing"
 )
 
+func Test_cleanedPassportFields(t *testing.T) {
+	tests := map[string]struct {
+		input []string
+		want  []string
+	}{
+		"filters out values": {
+			[]string{"field:value", "field1:value1", "field2:value2"},
+			[]string{"field", "field1", "field2"},
+		},
+		"ignores duplicates": {
+			[]string{"field:value", "field1:value1", "field1:value1"},
+			[]string{"field", "field1"},
+		},
+		"handles fields with no values": {
+			[]string{"field", "field1", "field2"},
+			[]string{"field", "field1", "field2"},
+		},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			got := cleanedPassportFields(tc.input)
+
+			if !reflect.DeepEqual(got, tc.want) {
+				t.Errorf("cleanedPassportFields err - got: %+v, want: %+v", got, tc.want)
+			}
+		})
+	}
+}
+
 func Test_cleanPassport(t *testing.T) {
 	tests := map[string]struct {
 		input string

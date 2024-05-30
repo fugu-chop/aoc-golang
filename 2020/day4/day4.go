@@ -72,11 +72,10 @@ func validPassport(passport string) bool {
 	return true
 }
 
-// TODO - add tests
 /*
 cleanedPassportFields takes a slice of strings, where each string takes
 the form of "field:value" (delimited by colon) and returns a slice of strings
-fields. cleanedPassport expects that each entry in cleanedPassport is already
+fields (excluding the values). cleanedPassport expects that each entry in cleanedPassport is already
 trimmed of whitespaces.
 */
 func cleanedPassportFields(cleanedPassport []string) []string {
@@ -84,7 +83,9 @@ func cleanedPassportFields(cleanedPassport []string) []string {
 
 	for _, entry := range cleanedPassport {
 		stringSlice := strings.Split(entry, ":")
-		cleanedFields = append(cleanedFields, stringSlice[0])
+		if !slices.Contains(cleanedFields, stringSlice[0]) {
+			cleanedFields = append(cleanedFields, stringSlice[0])
+		}
 	}
 
 	return cleanedFields
