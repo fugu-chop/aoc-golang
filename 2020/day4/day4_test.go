@@ -5,6 +5,140 @@ import (
 	"testing"
 )
 
+func Test_validBirthYear(t *testing.T) {
+	tests := map[string]struct {
+		input string
+		want  bool
+	}{
+		"valid year":         {"1920", true},
+		"valid year max":     {"2002", true},
+		"invalid year":       {"239", false},
+		"invalid format":     {"xyz", false},
+		"invalid characters": {"!@JH*E(M@)", false},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			parseFunc := validBirthYear()
+			got := parseFunc(tc.input)
+			if got != tc.want {
+				t.Errorf("validBirthYear %s err - got: %t, want: %t", name, got, tc.want)
+			}
+		})
+	}
+}
+
+func Test_validIssueYear(t *testing.T) {
+	tests := map[string]struct {
+		input string
+		want  bool
+	}{
+		"valid year min":     {"2010", true},
+		"valid year max":     {"2020", true},
+		"invalid year":       {"239", false},
+		"invalid format":     {"xyz", false},
+		"invalid characters": {"!@JH*E(M@)", false},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			parseFunc := validIssueYear()
+			got := parseFunc(tc.input)
+			if got != tc.want {
+				t.Errorf("validIssueYear %s err - got: %t, want: %t", name, got, tc.want)
+			}
+		})
+	}
+}
+
+func Test_validExpirationYear(t *testing.T) {
+	tests := map[string]struct {
+		input string
+		want  bool
+	}{
+		"valid year min":     {"2020", true},
+		"valid year max":     {"2030", true},
+		"invalid year":       {"239", false},
+		"invalid format":     {"xyz", false},
+		"invalid characters": {"!@JH*E(M@)", false},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			parseFunc := validExpirationYear()
+			got := parseFunc(tc.input)
+			if got != tc.want {
+				t.Errorf("validExpirationYear %s err - got: %t, want: %t", name, got, tc.want)
+			}
+		})
+	}
+}
+
+func Test_validEyeColour(t *testing.T) {
+	tests := map[string]struct {
+		input string
+		want  bool
+	}{
+		"valid colour":   {"hzl", true},
+		"invalid colour": {"red", false},
+		"case sensitive": {"oTh", false},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			parseFunc := validEyeColour()
+			got := parseFunc(tc.input)
+			if got != tc.want {
+				t.Errorf("validEyeColour %s err - got: %t, want: %t", name, got, tc.want)
+			}
+		})
+	}
+}
+
+func Test_validPassportID(t *testing.T) {
+	tests := map[string]struct {
+		input string
+		want  bool
+	}{
+		"valid passport ID": {"123456789", true},
+		"too short":         {"12345678", false},
+		"too long":          {"1234567891", false},
+		"other characters":  {"#@!tuvwxy", false},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			parseFunc := validPassportID()
+			got := parseFunc(tc.input)
+			if got != tc.want {
+				t.Errorf("validPassportID %s err - got: %t, want: %t", name, got, tc.want)
+			}
+		})
+	}
+}
+
+func Test_validHairColour(t *testing.T) {
+	tests := map[string]struct {
+		input string
+		want  bool
+	}{
+		"": {},
+	}
+
+	_ = tests
+}
+
+func Test_validHeight(t *testing.T) {
+	tests := map[string]struct {
+		input string
+		want  bool
+	}{
+		"": {},
+	}
+
+	_ = tests
+}
+
 func Test_validPassport(t *testing.T) {
 	tests := map[string]struct {
 		input string
