@@ -184,7 +184,8 @@ func validExpirationYear() func(string) bool {
 }
 
 /*
-validEyeColour checks if the value provided to the ecl field is valid
+validEyeColour checks if the value provided to the ecl field is valid.
+A valid eye colour is exactly one of: amb blu brn gry grn hzl oth.
 */
 func validEyeColour() func(string) bool {
 	return func(colour string) bool {
@@ -210,7 +211,7 @@ A valid hair colour is a # followed by exactly six characters 0-9 or a-f.
 */
 func validHairColour() func(string) bool {
 	return func(colour string) bool {
-		re := regexp.MustCompile(`^#(\d|[a-f]){6}$/i`)
+		re := regexp.MustCompile(`^#(\d|[a-f]){6}$`)
 		return re.Match([]byte(colour))
 	}
 }
