@@ -160,7 +160,7 @@ hcl:#cfa07d byr:1929`, false},
 		t.Run(name, func(t *testing.T) {
 			got := validPassport(tc.input)
 			if got != tc.want {
-				t.Errorf("validPassport err - got: %t, want: %t", got, tc.want)
+				t.Errorf("validPassport %s err - got: %t, want: %t", name, got, tc.want)
 			}
 		})
 	}
@@ -190,7 +190,7 @@ func Test_cleanedPassportFields(t *testing.T) {
 			got := cleanedPassportFields(tc.input)
 
 			if !reflect.DeepEqual(got, tc.want) {
-				t.Errorf("cleanedPassportFields err - got: %+v, want: %+v", got, tc.want)
+				t.Errorf("cleanedPassportFields %s err - got: %+v, want: %+v", name, got, tc.want)
 			}
 		})
 	}
@@ -216,7 +216,7 @@ func Test_cleanPassport(t *testing.T) {
 			got := cleanPassport(tc.input)
 
 			if !reflect.DeepEqual(got, tc.want) {
-				t.Errorf("cleanPassport() err: got: %s, want: %s", got, tc.want)
+				t.Errorf("cleanPassport() %s err: got: %s, want: %s", name, got, tc.want)
 			}
 		})
 	}
@@ -239,7 +239,7 @@ func Test_validField(t *testing.T) {
 			got := validField(tc.field)
 
 			if got != tc.want {
-				t.Errorf("validField() err: got %t, want: %t", got, tc.want)
+				t.Errorf("validField() %s err: got %t, want: %t", name, got, tc.want)
 			}
 		})
 	}
