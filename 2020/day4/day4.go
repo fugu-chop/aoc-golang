@@ -4,27 +4,24 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 )
 
 var (
 	fileLocation   = "./input.txt"
-	requiredFields = map[string]bool{
-		"byr": true,
-		"iyr": true,
-		"eyr": true,
-		"hgt": true,
-		"hcl": true,
-		"ecl": true,
-		"pid": true,
+	requiredFields = map[string]func(string) bool{
+		"byr": validBirthYear(),
+		"iyr": validIssueYear(),
+		"eyr": validExpirationYear(),
+		"hgt": validHeight(),
+		"hcl": validHairColour(),
+		"ecl": validEyeColour(),
+		"pid": validPassportID(),
 	}
 )
-
-type field struct {
-	name       string
-	validation func(interface{}) bool
-}
 
 func main() {
 	// Ideally we would use scanner, but the presence of a newline at
@@ -143,26 +140,105 @@ func validField(field string) bool {
 	return true
 }
 
-// Maybe some interface nonsense can be used?
-func validBirthYear(year int) bool {
-	return year >= 1920 && year <= 2002
+/*
+validBirthYear checks if the value provided to the byr field is valid
+A valid birth year is between 1920 and 2002.
+*/
+func validBirthYear() func(string) bool {
+	return func(year string) bool {
+		yearInt, err := strconv.Atoi(year)
+		if err != nil {
+			return false
+		}
+
+		return yearInt >= 1920 && yearInt <= 2002
+	}
 }
 
-func validIssueYear(year int) bool {
-	return year >= 2010 && year <= 2020
+/*
+validIssueYear checks if the value provided to the iyr field is valid.
+A valid issue year is between 2010 and 2020.
+*/
+func validIssueYear() func(string) bool {
+	return func(year string) bool {
+		yearInt, err := strconv.Atoi(year)
+		if err != nil {
+			return false
+		}
+		return yearInt >= 2010 && yearInt <= 2020
+	}
 }
 
-func validExpirationYear(year int) bool {
-	return year >= 2020 && year <= 2030
+/*
+validExpirationYear checks if the value provided to the eyr field is valid
+A valid expiration year is between 2020 and 2030.
+*/
+func validExpirationYear() func(string) bool {
+	return func(year string) bool {
+		yearInt, err := strconv.Atoi(year)
+		if err != nil {
+			return false
+		}
+		return yearInt >= 2020 && yearInt <= 2030
+	}
 }
 
-func validEyeColour(colour string) bool {
-	validColours := []string{"blu", "brn", "gry", "grn", "hzl", "oth"}
-	return slices.Contains(validColours, colour)
+/*
+validEyeColour checks if the value provided to the ecl field is valid
+*/
+func validEyeColour() func(string) bool {
+	return func(colour string) bool {
+		validColours := []string{"blu", "brn", "gry", "grn", "hzl", "oth"}
+		return slices.Contains(validColours, colour)
+	}
 }
 
-// valid hair colour probably needs regex
+/*
+validPassportID checks if the value provided to the pid field is valid.
+A valid passport ID is a nine-digit number, including leading zeroes.
+*/
+func validPassportID() func(string) bool {
+	return func(id string) bool {
+		re := regexp.MustCompile(`^\d{9}$`)
+		return re.Match([]byte(id))
+	}
+}
 
-// passport id - check entirely via regex?
+/*
+validHairColour checks if the value provided to the hcl field is valid
+A valid hair colour is a # followed by exactly six characters 0-9 or a-f.
+*/
+func validHairColour() func(string) bool {
+	return func(colour string) bool {
+		re := regexp.MustCompile(`^#(\d|[a-f]){6}$/i`)
+		return re.Match([]byte(colour))
+	}
+}
 
-// height - parse last two chars, check for in or cm
+/*
+validHeight checks if the value provided to the hgt field is valid
+A height is valid if a number is followed by either cm or in:
+
+	If cm, the number must be at least 150 and at most 193.
+	If in, the number must be at least 59 and at most 76.
+*/
+func validHeight() func(string) bool {
+	return func(value string) bool {
+		unitPosition := len(value) - 2
+		unit := string([]byte(value)[unitPosition:])
+		heightStr := string([]byte(value)[:unitPosition])
+		height, err := strconv.Atoi(heightStr)
+		if err != nil {
+			return false
+		}
+
+		switch unit {
+		case "cm":
+			return height >= 150 && height <= 193
+		case "in":
+			return height >= 59 && height <= 76
+		default:
+			return false
+		}
+	}
+}
