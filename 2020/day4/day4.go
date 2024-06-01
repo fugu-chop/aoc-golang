@@ -133,11 +133,12 @@ func validField(field string) bool {
 		return true
 	}
 
-	if _, ok := requiredFields[k]; !ok {
-		return false
+	parseFunc, ok := requiredFields[k]
+	if ok && parseFunc(v) {
+		return true
 	}
 
-	return true
+	return false
 }
 
 /*
@@ -189,7 +190,7 @@ A valid eye colour is exactly one of: amb blu brn gry grn hzl oth.
 */
 func validEyeColour() func(string) bool {
 	return func(colour string) bool {
-		validColours := []string{"blu", "brn", "gry", "grn", "hzl", "oth"}
+		validColours := []string{"amb", "blu", "brn", "gry", "grn", "hzl", "oth"}
 		return slices.Contains(validColours, colour)
 	}
 }
