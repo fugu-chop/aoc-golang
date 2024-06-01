@@ -123,11 +123,12 @@ func Test_validHairColour(t *testing.T) {
 		want  bool
 	}{
 		"valid hair colour":         {"#123abc", true},
-		"valid hair colour (order)": {"#abc123", true},
+		"valid hair colour (order)": {"#a1b31c", true},
 		"case sensitive":            {"#123ABC", false},
 		"missing #":                 {"123abc", false},
 		"incorrect characters":      {"#zxy890", false},
 		"too long":                  {"#12345678", false},
+		"too short":                 {"#12", false},
 	}
 
 	for name, tc := range tests {
