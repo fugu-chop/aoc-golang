@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -11,6 +12,7 @@ import (
 )
 
 var (
+	part           *int
 	fileLocation   = "./input.txt"
 	requiredFields = map[string]func(string) bool{
 		"byr": validBirthYear(),
@@ -24,6 +26,9 @@ var (
 )
 
 func main() {
+	part = flag.Int("part", 1, "which part of the solution should be used")
+	flag.Parse()
+
 	// Ideally we would use scanner, but the presence of a newline at
 	// end of the file breaks the iteration (will skip the last entry)
 	file, err := os.ReadFile(fileLocation)
@@ -134,8 +139,16 @@ func validField(field string) bool {
 	}
 
 	parseFunc, ok := requiredFields[k]
-	if ok && parseFunc(v) {
-		return true
+
+	switch *part {
+	case 1:
+		if ok {
+			return true
+		}
+	case 2:
+		if ok && parseFunc(v) {
+			return true
+		}
 	}
 
 	return false
