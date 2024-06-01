@@ -122,10 +122,23 @@ func Test_validHairColour(t *testing.T) {
 		input string
 		want  bool
 	}{
-		"": {},
+		"valid hair colour":         {"#123abc", true},
+		"valid hair colour (order)": {"#abc123", true},
+		"case sensitive":            {"#123ABC", false},
+		"missing #":                 {"123abc", false},
+		"incorrect characters":      {"#zxy890", false},
+		"too long":                  {"#12345678", false},
 	}
 
-	_ = tests
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			parseFunc := validHairColour()
+			got := parseFunc(tc.input)
+			if got != tc.want {
+				t.Errorf("validHairColour %s err - got: %t, want: %t", name, got, tc.want)
+			}
+		})
+	}
 }
 
 func Test_validHeight(t *testing.T) {
@@ -133,10 +146,23 @@ func Test_validHeight(t *testing.T) {
 		input string
 		want  bool
 	}{
-		"": {},
+		"inches":         {"70in", true},
+		"centimetres":    {"175cm", true},
+		"invalid unit":   {"125m", false},
+		"invalid input":  {"a!bcd", false},
+		"invalid cm":     {"2cm", false},
+		"invalid inches": {"1000in", false},
 	}
 
-	_ = tests
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			parseFunc := validHeight()
+			got := parseFunc(tc.input)
+			if got != tc.want {
+				t.Errorf("validHeight %s err - got: %t, want: %t", name, got, tc.want)
+			}
+		})
+	}
 }
 
 func Test_validPassport(t *testing.T) {
