@@ -2,9 +2,19 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
+)
+
+var (
+	firstRow       = 0
+	lastRow        = 127
+	front          = "F"
+	back           = "B"
+	left           = "L"
+	right          = "R"
+	lastRowIdx     = 6
+	firstColumnIdx = 7
 )
 
 type seatPosition struct {
@@ -117,6 +127,35 @@ func main() {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
+		/*
+			boundary := &boundary{
+				lower: firstRow,
+				upper: lastRow,
+			}
+			seatPosition := &seatPosition{}
+			boardingPassSlice := strings.Split(scanner.Text(), "")
+
+			for boundary.lower != boundary.upper {
+				for _, row := range boardingPassSlice[:lastRowIdx] {
+
+				}
+				for _, column := range boardingPassSlice[firstColumnIdx:] {
+
+				}
+			}
+		*/
 	}
+}
+
+func recalculateUpperBound(boundary *boundary) *boundary {
+	newUpper := boundary.upper + 1
+	newRange := (newUpper - boundary.lower) / 2
+	boundary.upper -= newRange - 1
+	return boundary
+}
+
+func recalculateLowerBound(boundary *boundary) *boundary {
+	newLower := boundary.upper + 1
+	boundary.lower += newLower / 2
+	return boundary
 }
