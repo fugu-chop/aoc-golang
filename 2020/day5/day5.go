@@ -2,19 +2,23 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 var (
-	firstRow       = 0
-	lastRow        = 127
-	front          = "F"
-	back           = "B"
-	left           = "L"
-	right          = "R"
-	lastRowIdx     = 6
-	firstColumnIdx = 7
+	firstRow   = 0
+	lastRow    = 127
+	firstCol   = 0
+	lastCol    = 7
+	front      = "F"
+	back       = "B"
+	left       = "L"
+	right      = "R"
+	lastRowIdx = 7
+	maxSeatID  = 0
 )
 
 type seatPosition struct {
@@ -24,8 +28,8 @@ type seatPosition struct {
 }
 
 type boundary struct {
-	upper int
 	lower int
+	upper int
 }
 
 func main() {
@@ -127,17 +131,44 @@ func main() {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		/*
-			boundary := &boundary{
-				lower: firstRow,
-				upper: lastRow,
+		rowBoundary := &boundary{
+			lower: firstRow,
+			upper: lastRow,
+		}
+		colBoundary := &boundary{
+			lower: firstCol,
+			upper: lastCol,
+		}
+		seatPosition := &seatPosition{}
+		boardingPassSlice := strings.Split(scanner.Text(), "")
+
+		for _, row := range boardingPassSlice[:lastRowIdx] {
+			if row == front {
+				recalculateUpperBound(rowBoundary)
 			}
-			seatPosition := &seatPosition{}
-			boardingPassSlice := strings.Split(scanner.Text(), "")
-				for _, row := range boardingPassSlice[:lastRowIdx] {}
-				for _, column := range boardingPassSlice[firstColumnIdx:] {}
-		*/
+			if row == back {
+				recalculateLowerBound(rowBoundary)
+			}
+		}
+		for _, column := range boardingPassSlice[lastRowIdx:] {
+			if column == left {
+				recalculateUpperBound(colBoundary)
+			}
+			if column == right {
+				recalculateLowerBound(colBoundary)
+			}
+		}
+
+		seatPosition.column = colBoundary.lower
+		seatPosition.row = rowBoundary.lower
+		seatPosition.seatID = (seatPosition.row * 8) + seatPosition.column
+
+		if seatPosition.seatID > maxSeatID {
+			maxSeatID = seatPosition.seatID
+		}
 	}
+
+	fmt.Println(maxSeatID)
 }
 
 func recalculateUpperBound(boundary *boundary) *boundary {
@@ -149,6 +180,6 @@ func recalculateUpperBound(boundary *boundary) *boundary {
 
 func recalculateLowerBound(boundary *boundary) *boundary {
 	newLower := boundary.upper + 1
-	boundary.lower += newLower / 2
+	boundary.lower += (newLower - boundary.lower) / 2
 	return boundary
 }
