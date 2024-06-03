@@ -81,3 +81,22 @@ func Test_createSeatPosition(t *testing.T) {
 		})
 	}
 }
+
+func Test_findMissingSeat(t *testing.T) {
+	tests := map[string]struct {
+		input []int
+		want  int
+	}{
+		"sorts and finds missing seat": {
+			input: []int{717, 719, 716, 720},
+			want:  718,
+		},
+	}
+
+	for name, tc := range tests {
+		got := findMissingSeat(tc.input)
+		if got != tc.want {
+			t.Errorf("findMissingSeat %s err: got: %d, want: %d", name, got, tc.want)
+		}
+	}
+}

@@ -90,7 +90,6 @@ func main() {
 	if *part == 1 {
 		fmt.Println(maxSeatID)
 	} else {
-		slices.Sort(seatIDs)
 		missingSeat := findMissingSeat(seatIDs)
 		fmt.Println(missingSeat)
 	}
@@ -119,6 +118,7 @@ func createSeatPosition(row, column int) *seatPosition {
 }
 
 func findMissingSeat(seats []int) int {
+	slices.Sort(seats)
 	current := seats[1]
 
 	for _, seat := range seats {
