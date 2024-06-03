@@ -139,7 +139,6 @@ func main() {
 			lower: firstCol,
 			upper: lastCol,
 		}
-		seatPosition := &seatPosition{}
 		boardingPassSlice := strings.Split(scanner.Text(), "")
 
 		for _, row := range boardingPassSlice[:lastRowIdx] {
@@ -159,9 +158,7 @@ func main() {
 			}
 		}
 
-		seatPosition.column = colBoundary.lower
-		seatPosition.row = rowBoundary.lower
-		seatPosition.seatID = (seatPosition.row * 8) + seatPosition.column
+		seatPosition := createSeatPosition(rowBoundary.lower, colBoundary.lower)
 
 		if seatPosition.seatID > maxSeatID {
 			maxSeatID = seatPosition.seatID
@@ -182,4 +179,12 @@ func recalculateLowerBound(boundary *boundary) *boundary {
 	newLower := boundary.upper + 1
 	boundary.lower += (newLower - boundary.lower) / 2
 	return boundary
+}
+
+func createSeatPosition(row, column int) *seatPosition {
+	return &seatPosition{
+		row:    row,
+		column: column,
+		seatID: (row * 8) + column,
+	}
 }

@@ -1,6 +1,8 @@
 package main
 
-import "testing"
+import (
+	"testing"
+)
 
 func Test_recalculateUpperBound(t *testing.T) {
 	boundaryObj := &boundary{
@@ -48,6 +50,33 @@ func Test_recalculateLowerBound(t *testing.T) {
 			got := recalculateLowerBound(boundaryObj)
 			if got.lower != test.want {
 				t.Errorf("recalculateLowerBound %s err: got: %+v, want: %+v", name, got.lower, test.want)
+			}
+		})
+	}
+}
+
+func Test_createSeatPosition(t *testing.T) {
+	tests := map[string]struct {
+		row, col, seatID int
+		want             *seatPosition
+	}{
+		"returns new object correctly": {
+			row:    44,
+			col:    5,
+			seatID: 357,
+			want: &seatPosition{
+				row:    44,
+				column: 5,
+				seatID: 357,
+			},
+		},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			got := createSeatPosition(tc.row, tc.col)
+			if got.column != tc.col || got.row != tc.row || got.seatID != tc.seatID {
+				t.Errorf("createSeatPosition %s err: got: %+v, want: %+v", name, got, tc.want)
 			}
 		})
 	}
