@@ -134,15 +134,8 @@ func main() {
 			}
 			seatPosition := &seatPosition{}
 			boardingPassSlice := strings.Split(scanner.Text(), "")
-
-			for boundary.lower != boundary.upper {
-				for _, row := range boardingPassSlice[:lastRowIdx] {
-
-				}
-				for _, column := range boardingPassSlice[firstColumnIdx:] {
-
-				}
-			}
+				for _, row := range boardingPassSlice[:lastRowIdx] {}
+				for _, column := range boardingPassSlice[firstColumnIdx:] {}
 		*/
 	}
 }
@@ -150,7 +143,7 @@ func main() {
 func recalculateUpperBound(boundary *boundary) *boundary {
 	newUpper := boundary.upper + 1
 	newRange := (newUpper - boundary.lower) / 2
-	boundary.upper -= newRange - 1
+	boundary.upper -= newRange
 	return boundary
 }
 
