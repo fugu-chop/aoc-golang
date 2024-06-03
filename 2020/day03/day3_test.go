@@ -196,6 +196,9 @@ func setGoldenFile(fileLocation string) {
 	defer file.Close()
 
 	for _, row := range goldenSample {
-		file.WriteString(fmt.Sprintf("%+v\n", row))
+		_, err = file.WriteString(fmt.Sprintf("%+v\n", row))
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
