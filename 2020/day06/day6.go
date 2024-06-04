@@ -27,49 +27,66 @@ func main() {
 
 	var totalUniqueAnswers int
 
-	for _, resps := range groups {
-		uniqueAnswers := []string{}
-		answers := strings.Split(resps, "")
+	if *part == 1 {
+		for _, resps := range groups {
+			uniqueAnswers := []string{}
 
-		for _, answer := range answers {
-			cleanedAnswer := strings.TrimSpace(answer)
+			answers := strings.Split(resps, "")
+			for _, answer := range answers {
+				cleanedAnswer := strings.TrimSpace(answer)
 
-			/*
-				new requirement - only increment totalUniqueAnswers
-				if a letter is present on every row
-
-				We need to be smarter than just iterating over every single entry
-				as this will have O(n!) time complexity - not great
-
-				Potential approach is to select an entry with the shortest length -
-				this is our lowest common denominator
-
-				we can then iterate over each letter of that entry
-				We don't need to retain which letter it is, only that it was present
-
-				Algorithm
-					- Given a group, e.g.
-
-						heqznia
-						cipkn
-						gvsitwynrxb
-
-					- Since the strings are all English ASCII, we can safely use len(string) to find
-						the shortest slice, shortestAnswers
-					- We can then iterate over shorestAnswers, checking if each other answer contains
-					all of the letters in shortestAnswers
-					- Increment counter if yes
-					- Print counter
-			*/
-			if *part == 1 {
 				if !slices.Contains(uniqueAnswers, cleanedAnswer) && len(cleanedAnswer) > 0 {
 					uniqueAnswers = append(uniqueAnswers, cleanedAnswer)
 				}
 			}
-		}
 
-		totalUniqueAnswers += len(uniqueAnswers)
+			totalUniqueAnswers += len(uniqueAnswers)
+		}
+	}
+
+	if *part == 2 {
+		for _, group := range groups {
+			counts, numAnswers := memoiseGroup(group)
+			for _, value := range counts {
+				if value == numAnswers {
+					totalUniqueAnswers++
+				}
+			}
+		}
 	}
 
 	fmt.Println(totalUniqueAnswers)
+}
+
+/*
+memoiseGroup takes in a string with multiple newlines and returns
+a map of letters and the number of times they occur in the group
+*/
+func memoiseGroup(group string) (map[string]int, int) {
+	counts := map[string]int{}
+	groups := cleanGroup(group)
+
+	// concatenate the groups into a single string
+	answerSlice := strings.Split(strings.Join(groups, ""), "")
+	numAnswers := len(groups)
+
+	for _, answer := range answerSlice {
+		counts[answer]++
+	}
+
+	return counts, numAnswers
+}
+
+func cleanGroup(group string) []string {
+	output := []string{}
+	clean := strings.Split(group, "\n")
+
+	for _, item := range clean {
+		trimmedItem := strings.TrimSpace(item)
+		if len(trimmedItem) > 0 {
+			output = append(output, trimmedItem)
+		}
+	}
+
+	return output
 }
