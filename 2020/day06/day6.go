@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -13,6 +14,9 @@ var (
 )
 
 func main() {
+	part := flag.Int("part", 1, "which part of the solution is being solved")
+	flag.Parse()
+
 	file, err := os.ReadFile(fileLocation)
 	if err != nil {
 		log.Fatal(err)
@@ -57,8 +61,10 @@ func main() {
 					- Increment counter if yes
 					- Print counter
 			*/
-			if !slices.Contains(uniqueAnswers, cleanedAnswer) && len(cleanedAnswer) > 0 {
-				uniqueAnswers = append(uniqueAnswers, cleanedAnswer)
+			if *part == 1 {
+				if !slices.Contains(uniqueAnswers, cleanedAnswer) && len(cleanedAnswer) > 0 {
+					uniqueAnswers = append(uniqueAnswers, cleanedAnswer)
+				}
 			}
 		}
 
