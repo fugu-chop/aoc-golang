@@ -6,17 +6,18 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strings"
 )
 
 var (
 	targetBag    = "shiny gold"
-	fileLocation = "./input.txt"
+	fileLocation = "./simple_input.txt"
 )
 
 type bag struct {
 	name     string
-	children []*bag
-	parents  []*bag
+	children []string
+	parents  []string
 }
 
 func main() {
@@ -25,10 +26,15 @@ func main() {
 		log.Fatal(err)
 	}
 
+	collection := map[string]bag{}
 	scanner := bufio.NewScanner(file)
+
 	for scanner.Scan() {
-		parseRule(scanner.Text())
+		// Build our collection
+		parseRule(scanner.Text(), collection)
 	}
+
+	fmt.Printf("%+v", collection)
 
 	/*
 		Problem
@@ -76,12 +82,70 @@ parseRule takes in an input string, such as "pale chartreuse bags
 contain 3 faded orange bags." and converts it into a pointer to a bag
 type, specifying the colour of parent bag and it's child bags.
 */
-func parseRule(rule string) *bag {
+func parseRule(rule string, collection map[string]bag) []*bag {
+	output := []*bag{}
+
+	bag := generateBag(rule)
+	collection[bag.name] = bag
+	fmt.Printf("%v\n", collection)
+	/*
+		This will return a nested slice of strings. E.g.
+		[
+			[
+				"posh black bags contain 3 dark lavender bags, 3 mirrored coral bags, 1 dotted chartreuse bag.",
+				"posh black",
+				" bags contain ",
+				"3 dark lavender bags, 3 mirrored coral bags, 1 dotted chartreuse bag."
+			]
+		]
+
+		The second element of the inner slice will contain the colour of the bag.
+		The 4th elements onward contain the children bags.
+	*/
+
+	return output
+}
+
+/*
+findParents takes in a slice of bags and iterates over the children, attempting
+to populate the parents of each of the bags. It also creates entries in the collection
+map where a given child bag has no further children.
+*/
+func populateParents(bags []*bag, collection map[string]*bag) {
+
+}
+
+/*
+generateBag takes in a string of the format
+"posh black bags contain 3 dark lavender bags, 3 mirrored coral bags, 1 dotted chartreuse bag."
+and returns a pointer to a bag type with the name and children populated
+*/
+func generateBag(rule string) bag {
 	output := bag{}
-
 	re := regexp.MustCompile(`(\D+)( bags contain )(.+)`)
-	strings := re.FindAllStringSubmatch(rule, -1)
-	fmt.Printf("%q\n", strings)
 
-	return &output
+	rules := re.FindAllStringSubmatch(rule, -1)
+	output.name = rules[0][1]
+	children := rules[0][3:]
+	output.children = cleanChildren(children)
+
+	return output
+}
+
+/*
+cleanChildren accepts a string slice with a single element
+E.g. ["3 dark lavender bags, 3 mirrored coral bags, 1 dotted chartreuse bag."]
+and returns a slice of the colours only
+(excluding counts, punctuation and the word 'bag').
+*/
+func cleanChildren(children []string) []string {
+	cleanedChildren := []string{}
+	splitChildren := strings.Split(children[0], ", ")
+	re := regexp.MustCompile(`\d+ (.+) bag`)
+
+	for _, child := range splitChildren {
+		cleanedChildren = append(cleanedChildren, re.FindStringSubmatch(child)[1])
+	}
+
+	return cleanedChildren
 }
