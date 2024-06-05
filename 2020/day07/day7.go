@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"slices"
 	"strings"
 )
 
@@ -86,27 +87,33 @@ func parseRule(rule string, collection map[string]*bag) []*bag {
 	output := []*bag{}
 
 	name, children := generateBagOutputsFromRule(rule)
-	createBag(name, children, collection)
+	bag := createBag(name, collection)
+	createChildrenBags(bag, children, collection)
 
 	return output
 }
 
-// TODO: Split this function out - createBag currently does too much
-// have the children creation occur elsewhere
-func createBag(name string, children []string, collection map[string]*bag) {
+func createBag(name string, collection map[string]*bag) *bag {
 	result := &bag{}
 	result.name = name
 	if _, ok := collection[name]; !ok {
 		collection[name] = result
 	}
 
-	// Split this out
+	return result
+}
+
+// Would ideally like to be on the type, but the dependency on an external function
+// makes that a bit tangled.
+func createChildrenBags(parent *bag, children []string, collection map[string]*bag) {
 	for _, child := range children {
-		childBag := &bag{}
-		childBag.name = child
-		collection[child] = childBag
-		childBag.parents = append(childBag.parents, result.name)
-		result.children = append(result.children, childBag.name)
+		newBag := createBag(child, collection)
+		if !slices.Contains(newBag.parents, parent.name) {
+			newBag.parents = append(newBag.parents, parent.name)
+		}
+		if !slices.Contains(parent.children, newBag.name) {
+			parent.children = append(parent.children, newBag.name)
+		}
 	}
 }
 
