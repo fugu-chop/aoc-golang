@@ -26,7 +26,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	collection := map[string]bag{}
+	collection := map[string]*bag{}
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
@@ -82,12 +82,42 @@ parseRule takes in an input string, such as "pale chartreuse bags
 contain 3 faded orange bags." and converts it into a pointer to a bag
 type, specifying the colour of parent bag and it's child bags.
 */
-func parseRule(rule string, collection map[string]bag) []*bag {
+func parseRule(rule string, collection map[string]*bag) []*bag {
 	output := []*bag{}
 
-	bag := generateBag(rule)
-	collection[bag.name] = bag
-	fmt.Printf("%v\n", collection)
+	name, children := generateBagOutputsFromRule(rule)
+	createBag(name, children, collection)
+
+	return output
+}
+
+// TODO: Split this function out - createBag currently does too much
+// have the children creation occur elsewhere
+func createBag(name string, children []string, collection map[string]*bag) {
+	result := &bag{}
+	result.name = name
+	if _, ok := collection[name]; !ok {
+		collection[name] = result
+	}
+
+	// Split this out
+	for _, child := range children {
+		childBag := &bag{}
+		childBag.name = child
+		collection[child] = childBag
+		childBag.parents = append(childBag.parents, result.name)
+		result.children = append(result.children, childBag.name)
+	}
+}
+
+/*
+generateBagOutputsFromRule takes in a string of the format
+"posh black bags contain 3 dark lavender bags, 3 mirrored coral bags, 1 dotted chartreuse bag."
+and returns a string with the name and a slice of strings with children
+*/
+func generateBagOutputsFromRule(rule string) (string, []string) {
+	re := regexp.MustCompile(`(\D+)( bags contain )(.+)`)
+
 	/*
 		This will return a nested slice of strings. E.g.
 		[
@@ -102,34 +132,11 @@ func parseRule(rule string, collection map[string]bag) []*bag {
 		The second element of the inner slice will contain the colour of the bag.
 		The 4th elements onward contain the children bags.
 	*/
-
-	return output
-}
-
-/*
-findParents takes in a slice of bags and iterates over the children, attempting
-to populate the parents of each of the bags. It also creates entries in the collection
-map where a given child bag has no further children.
-*/
-func populateParents(bags []*bag, collection map[string]*bag) {
-
-}
-
-/*
-generateBag takes in a string of the format
-"posh black bags contain 3 dark lavender bags, 3 mirrored coral bags, 1 dotted chartreuse bag."
-and returns a pointer to a bag type with the name and children populated
-*/
-func generateBag(rule string) bag {
-	output := bag{}
-	re := regexp.MustCompile(`(\D+)( bags contain )(.+)`)
-
 	rules := re.FindAllStringSubmatch(rule, -1)
-	output.name = rules[0][1]
-	children := rules[0][3:]
-	output.children = cleanChildren(children)
+	name := rules[0][1]
+	children := cleanChildren(rules[0][3:])
 
-	return output
+	return name, children
 }
 
 /*
