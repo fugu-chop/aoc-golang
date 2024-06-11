@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"bufio"
 	"log"
 	"os"
 	"regexp"
@@ -10,29 +10,28 @@ import (
 
 var (
 	targetBag    = "shiny gold"
-	fileLocation = "./input.txt"
-	lineage      = []string{}
+	fileLocation = "./sample_input.txt"
+	lineage      = map[string]*bag{}
+	terminus     = " no other bags."
 )
 
+type bag struct {
+	name     string
+	children []*bag
+	parents  []*bag
+}
+
 func main() {
-	file, err := os.ReadFile(fileLocation)
+	file, err := os.Open(fileLocation)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer file.Close()
 
-	fileString := string(file)
-	rules := strings.Split(fileString, "\n")
-
-	for _, rule := range rules {
-		if hasTargetBagChildren(rule) {
-			parent := getParent(rule)
-			if len(parent) > 0 {
-				lineage = append(lineage, parent)
-			}
-		}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		memoiseRelationships(scanner.Text(), lineage)
 	}
-
-	fmt.Println(lineage)
 
 	/*
 		Problem
@@ -87,14 +86,31 @@ func main() {
 	*/
 }
 
-// can probably recursively run until "contains no other bags"
-func getParent(rule string) string {
-	return strings.Split(rule, "bags contain")[0]
+func memoiseRelationships(rule string, relationship map[string]*bag) {
+	parent := &bag{}
+	relationshipComponents := strings.Split(rule, "bags contain")
+	parent.name = relationshipComponents[0]
+	relationship[parent.name] = parent
+	children := relationshipComponents[1]
+	if children == terminus {
+		return
+	}
+
+	createChildBags(children, parent, relationship)
 }
 
-func hasTargetBagChildren(rule string) bool {
-	re := regexp.MustCompile(`\d+ ` + targetBag + ` bag`)
-	matches := re.FindStringSubmatch(rule)
+func createChildBags(children string, parent *bag, relationship map[string]*bag) {
+	bagNames := strings.Split(children, ",")
 
-	return len(matches) > 0
+	re := regexp.MustCompile(`\d (.+) bag`)
+
+	for _, bagName := range bagNames {
+		matches := re.FindAllStringSubmatch(bagName, -1)
+		childName := matches[0][1]
+		childBag := bag{
+			name: childName,
+		}
+		relationship[childName] = &childBag
+		childBag.parents = append(childBag.parents, parent)
+	}
 }
