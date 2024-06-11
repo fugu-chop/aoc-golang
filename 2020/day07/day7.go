@@ -1,22 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 )
 
 var (
 	targetBag    = "shiny gold"
-	fileLocation = "./simple_input.txt"
+	fileLocation = "./input.txt"
+	lineage      = []string{}
 )
-
-type bag struct {
-	name     string
-	children []*bag
-	parents  []*bag
-}
 
 func main() {
 	file, err := os.ReadFile(fileLocation)
@@ -27,7 +22,12 @@ func main() {
 	fileString := string(file)
 	rules := strings.Split(fileString, "\n")
 	for _, rule := range rules {
-		fmt.Println(rule)
+		if hasTargetBagChildren(rule) {
+			parent := getParent(rule)
+			if len(parent) > 0 {
+				lineage = append(lineage, parent)
+			}
+		}
 	}
 
 	/*
@@ -83,7 +83,19 @@ func main() {
 	*/
 }
 
-/*
-re := regexp.MustCompile(`(\D+)( bags contain )(.+)`)
-re := regexp.MustCompile(`\d+ (.+) bag`)
-*/
+func getParent(rule string) string {
+	parent := strings.Split(rule, "bags contain")[0]
+
+	if parent == targetBag {
+		return ""
+	}
+
+	return parent
+}
+
+func hasTargetBagChildren(rule string) bool {
+	re := regexp.MustCompile(`\d+ ` + targetBag + ` bag`)
+	matches := re.FindStringSubmatch(rule)
+
+	return len(matches) > 0
+}
