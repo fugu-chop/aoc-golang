@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -21,6 +22,7 @@ func main() {
 
 	fileString := string(file)
 	rules := strings.Split(fileString, "\n")
+
 	for _, rule := range rules {
 		if hasTargetBagChildren(rule) {
 			parent := getParent(rule)
@@ -29,6 +31,8 @@ func main() {
 			}
 		}
 	}
+
+	fmt.Println(lineage)
 
 	/*
 		Problem
@@ -83,14 +87,9 @@ func main() {
 	*/
 }
 
+// can probably recursively run until "contains no other bags"
 func getParent(rule string) string {
-	parent := strings.Split(rule, "bags contain")[0]
-
-	if parent == targetBag {
-		return ""
-	}
-
-	return parent
+	return strings.Split(rule, "bags contain")[0]
 }
 
 func hasTargetBagChildren(rule string) bool {
