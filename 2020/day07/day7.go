@@ -107,10 +107,11 @@ func createChildBags(children string, parent *bag, relationship map[string]*bag)
 	for _, bagName := range bagNames {
 		matches := re.FindAllStringSubmatch(bagName, -1)
 		childName := matches[0][1]
-		childBag := bag{
+		childBag := &bag{
 			name: childName,
 		}
-		relationship[childName] = &childBag
+		relationship[childName] = childBag
 		childBag.parents = append(childBag.parents, parent)
+		parent.children = append(parent.children, childBag)
 	}
 }
