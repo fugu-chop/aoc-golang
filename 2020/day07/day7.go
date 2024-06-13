@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -32,6 +33,13 @@ func main() {
 	for scanner.Scan() {
 		memoiseRelationships(scanner.Text(), lineage)
 	}
+
+	for _, c := range lineage[targetBag].parents {
+		fmt.Println("parent name: " + c.name)
+	}
+
+	// total := countParents(lineage, targetBag)
+	// fmt.Println(total)
 
 	/*
 		Problem
@@ -107,11 +115,27 @@ func createChildBags(children string, parent *bag, relationship map[string]*bag)
 	for _, bagName := range bagNames {
 		matches := re.FindAllStringSubmatch(bagName, -1)
 		childName := matches[0][1]
-		childBag := &bag{
-			name: childName,
+
+		_, ok := relationship[childName]
+		if !ok {
+			childBag := &bag{
+				name: childName,
+			}
+			relationship[childName] = childBag
 		}
-		relationship[childName] = childBag
-		childBag.parents = append(childBag.parents, parent)
-		parent.children = append(parent.children, childBag)
+
+		relationship[childName].parents = append(relationship[childName].parents, parent)
+		parent.children = append(parent.children, relationship[childName])
 	}
+}
+
+func countParents(relationship map[string]*bag, node string) int {
+	fmt.Println(relationship[node].name)
+
+	for _, parent := range relationship[node].parents {
+		fmt.Println(parent.name)
+		// countParents(relationship, parent.name)
+	}
+
+	return 1
 }
