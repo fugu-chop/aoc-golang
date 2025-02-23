@@ -39,5 +39,9 @@ func main() {
 		totalRibbon += (perimeter + ribbon)
 	}
 
+	if err := scanner.Err(); err != nil {
+		panic(err)
+	}
+
 	fmt.Println(totalRibbon)
 }

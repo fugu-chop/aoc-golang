@@ -24,8 +24,7 @@ func main() {
 		intNewCoordinate := incrementCoordinate(intPreviousCoordinate, move)
 		newCoordinate := stringifyCoordinate(intNewCoordinate)
 
-		_, ok := coordinatesVisited[newCoordinate]
-		if !ok {
+		if _, ok := coordinatesVisited[newCoordinate]; !ok {
 			coordinatesVisited[newCoordinate] += 1
 		}
 		previousCoordinate = newCoordinate
