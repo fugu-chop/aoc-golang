@@ -6,7 +6,10 @@ import (
 	"io"
 )
 
-const input = "bgvyzdsv"
+const (
+	input         = "bgvyzdsv"
+	leadingZeroes = "00000"
+)
 
 func main() {
 	for i := 0; i < 1000000; i++ {
@@ -18,8 +21,7 @@ func main() {
 		io.WriteString(h, fmt.Sprintf("%s%d", input, i))
 
 		hexSolution := fmt.Sprintf("%x", h.Sum(nil))
-		if string(hexSolution[:5]) == "00000" {
-			fmt.Println(hexSolution)
+		if string(hexSolution[:5]) == leadingZeroes {
 			fmt.Println(i)
 			return
 		}
